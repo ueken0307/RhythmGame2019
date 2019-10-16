@@ -368,5 +368,6 @@ build.ninja
 rules.ninja
 
 ## other
-Musics
-ScreenShot
+Musics/
+example/
+engine/
