@@ -15,9 +15,8 @@ public:
 
 class RhythmGameManager {
 public:
-  RhythmGameManager() {};
-  RhythmGameManager(std::vector<NoteData> notes, std::vector<BpmData> bpms, double offset);
-  void start(bool isAuto = false);
+  RhythmGameManager(std::vector<NoteData> notes, std::vector<BpmData> bpms, double offset, bool isAuto = false);
+  void start();
   void update();
   int getBmsCount() { return rhythmManager.getBmsCount(); };
   double getSecond() { return rhythmManager.getSecond(); };
