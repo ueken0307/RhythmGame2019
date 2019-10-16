@@ -20,7 +20,7 @@ RhythmManager::RhythmManager(std::vector<BpmData> &bpmDatas,double offsetSecond,
 
   startSecond = BtoS(9600 * startMeasure);
   this->offsetSecond = offsetSecond + startSecond;
-  bmsCount = (timer.nowSecond(offsetSecond) * (this->bpmDatas[0].bpm / 60.0) * (9600.0 / this->bpmDatas[0].beat));
+  bmsCount = static_cast<int>(timer.nowSecond(offsetSecond) * (this->bpmDatas[0].bpm / 60.0) * (9600.0 / this->bpmDatas[0].beat));
 }
 
 double RhythmManager::BtoS(int count) const {
@@ -52,5 +52,5 @@ void RhythmManager::update() {
     }
   }
 
-  bmsCount = bpmDatas[tmp].count + ((timer.nowSecond(offsetSecond) - changeTimes[tmp]) * (bpmDatas[tmp].bpm / 60.0) * (9600.0 / bpmDatas[tmp].beat));
+  bmsCount = bpmDatas[tmp].count + static_cast<int>((timer.nowSecond(offsetSecond) - changeTimes[tmp]) * (bpmDatas[tmp].bpm / 60.0) * (9600.0 / bpmDatas[tmp].beat));
 }
