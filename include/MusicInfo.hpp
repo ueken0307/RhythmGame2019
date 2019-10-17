@@ -5,27 +5,25 @@
 
 class MusicInfo {
 public:
-  MusicInfo(String folderName, String musicFileName, String title, String artist, String bpm, double offset, std::vector<int> playLevels,Texture texture);
+  MusicInfo(String folderPath, String title, String artist, String bpm, double offset, Array<int> playLevels, String assetName);
 
-  String getFolderName() const { return folderName; };
-  String getMusicFileName() const { return musicFileName; };
+  String getFolderPath() const { return folderPath; };
   String getTitle() const { return title; };
   String getArtist() const { return artist; };
   String getBpm() const { return bpm; };
   double getOffset() const { return offset; };
-  std::vector<int> getPlayLevels() const { return playLevels; };
-  Texture getTexture() const { return texture; };
+  Array<int> getPlayLevels() const { return playLevels; };
+  String getAssetName() const { return assetName; }
   
 
 private:
-  String folderName;
-  String musicFileName;
+  String folderPath;
   String title;
   String artist;
   String bpm;
-  std::vector<int> playLevels; 
   double offset;
-  Texture texture;
+  Array<int> playLevels;
+  String assetName;
 
 };
 
