@@ -112,6 +112,7 @@
   <ItemGroup>
     <ClCompile Include="..\..\include\AdjustSpeed.cpp" />
     <ClCompile Include="..\..\include\Game.cpp" />
+    <ClCompile Include="..\..\include\Load.cpp" />
     <ClCompile Include="..\..\include\MusicInfo.cpp" />
     <ClCompile Include="..\..\include\MusicSelection.cpp" />
     <ClCompile Include="..\..\include\NoteData.cpp" />
@@ -242,6 +243,7 @@
   <ItemGroup>
     <ClInclude Include="..\..\include\AdjustSpeed.hpp" />
     <ClInclude Include="..\..\include\Game.hpp" />
+    <ClInclude Include="..\..\include\Load.hpp" />
     <ClInclude Include="..\..\include\MusicInfo.hpp" />
     <ClInclude Include="..\..\include\MusicSelection.hpp" />
     <ClInclude Include="..\..\include\NoteData.hpp" />

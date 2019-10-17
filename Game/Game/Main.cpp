@@ -5,6 +5,7 @@
 #include "ShareData.hpp"
 #include "State.hpp"
 
+#include "Load.hpp"
 #include "MusicSelection.hpp"
 #include "AdjustSpeed.hpp"
 #include "Game.hpp"
@@ -26,6 +27,7 @@ void Main() {
   //----------
   SceneManager<State, ShareData> sm;
   sm
+    .add<Load>(State::Load)
     .add<MusicSelection>(State::MusicSelection)
     .add<AdjustSpeed>(State::AdjustSpeed)
     .add<Game>(State::Game)
