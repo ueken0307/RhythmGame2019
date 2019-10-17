@@ -253,6 +253,7 @@
     <ClInclude Include="..\..\include\ShareData.hpp" />
     <ClInclude Include="..\..\include\State.hpp" />
     <ClInclude Include="..\..\include\TimeManager.hpp" />
+    <ClInclude Include="..\..\include\Utility.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -8,6 +8,7 @@
 #include "ShareData.hpp"
 #include "State.hpp"
 #include "MusicInfo.hpp"
+#include "Utility.hpp"
 
 #define DEVELOP_MUSICS_PATH "../../../Musics/"
 

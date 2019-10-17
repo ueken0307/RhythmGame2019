@@ -7,7 +7,7 @@ Load::Load(const InitData& init) : IScene(init), font(10) {
     String folderPath = Unicode::Widen(DEVELOP_MUSICS_PATH + i.path().filename().string());
     String infoPath = folderPath + U"/info.json";
 
-    printf("%s\n", infoPath.narrow().c_str());
+    DEBUG_PRINTF("%s\n", infoPath.narrow().c_str());
 
     JSONReader reader(infoPath);
 
@@ -33,7 +33,7 @@ Load::Load(const InitData& init) : IScene(init), font(10) {
       assetName
     ));
 
-    printf("  title  : %s\n"
+    DEBUG_PRINTF("  title  : %s\n"
            "  artist : %s\n"
            "  bpm    : %s\n"
            "  music  : %s\n"
@@ -44,7 +44,7 @@ Load::Load(const InitData& init) : IScene(init), font(10) {
       jacketFileName.narrow().c_str(), offset, playLevel[0], playLevel[1], playLevel[2]);
   }
 
-  printf("%d musics was loaded.\n", (int)infos.size());
+  DEBUG_PRINTF("%d musics was loaded.\n", (int)infos.size());
 }
 
 void Load::update() {
