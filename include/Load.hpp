@@ -23,6 +23,7 @@ public:
 
 private:
   Font font;
+  std::vector<String> failList;
 };
 
 #endif // LOAD_HPP
