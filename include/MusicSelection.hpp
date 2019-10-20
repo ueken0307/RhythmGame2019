@@ -5,6 +5,7 @@
 
 #include "ShareData.hpp"
 #include "State.hpp"
+#include "Utility.hpp"
 
 class MusicSelection :public SceneManager<State, ShareData>::Scene {
 public:
@@ -17,6 +18,8 @@ public:
 
 private:
   Font font;
+
+  bool downPlusKey, downMinusKey;
 };
 
 #endif // MUSIC_SELECTION_HPP

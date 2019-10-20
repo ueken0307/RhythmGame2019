@@ -7,8 +7,10 @@ class ShareData {
 
 public:
   ShareData() {
+    selected = 0;
   };
 
+  size_t selected;
   std::vector<MusicInfo> infos;
 };
 
