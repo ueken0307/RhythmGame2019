@@ -3,6 +3,10 @@
 Load::Load(const InitData& init) : IScene(init), font(20) {
   auto &infos = getData().infos;
 
+  if (!std::filesystem::exists(DEVELOP_MUSICS_PATH)) {
+    throw Error(U"Cannot Open" + Unicode::Widen(DEVELOP_MUSICS_PATH));
+  }
+
   for (const auto& i : std::filesystem::directory_iterator(DEVELOP_MUSICS_PATH)) {
     String folderPath = Unicode::Widen(DEVELOP_MUSICS_PATH + i.path().filename().string());
     String infoPath = folderPath + U"/info.json";
