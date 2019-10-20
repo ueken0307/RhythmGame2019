@@ -67,7 +67,7 @@ Load::Load(const InitData& init) : IScene(init), font(20) {
 
 void Load::update() {
   if (KeyEnter.pressed()) {
-    this->changeScene(State::Result);
+    this->changeScene(State::MusicSelection);
   }
 }
 
