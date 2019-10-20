@@ -24,6 +24,9 @@ void Main() {
 #endif // _DEBUG
 
   //----------
+  Window::SetStyle(WindowStyle::Sizable);
+  Scene::Resize({1920,1080});
+  Window::Resize({1280,720}, WindowResizeOption::KeepSceneSize);
   //----------
   SceneManager<State, ShareData> sm;
   sm
