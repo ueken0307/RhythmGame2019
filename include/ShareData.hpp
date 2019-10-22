@@ -80,6 +80,10 @@ public:
     return infos.at(selected).getFolderPath() + levelFileName.at(levelNum);
   }
 
+  MusicInfo& getSelectedInfo() {
+    return infos.at(selected);
+  }
+
   std::array<String, 3> levelFileName;
   ResultData result;
 
