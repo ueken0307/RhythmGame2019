@@ -119,6 +119,7 @@
     <ClCompile Include="..\..\include\Result.cpp" />
     <ClCompile Include="..\..\include\RhythmGameManager.cpp" />
     <ClCompile Include="..\..\include\RhythmManager.cpp" />
+    <ClCompile Include="..\..\include\ShareData.cpp" />
     <ClCompile Include="..\..\include\TimeManager.cpp" />
     <ClCompile Include="Main.cpp" />
   </ItemGroup>
