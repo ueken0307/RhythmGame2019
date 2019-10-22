@@ -16,6 +16,7 @@ public:
 
 class RhythmManager {
 public:
+  RhythmManager(): bpmDatas(std::vector<BpmData>()), offsetSecond(0), startSecond(0), bmsCount(0) {};
   RhythmManager(std::vector<BpmData> &bpmDatas, double offsetSecond = 0.0, int startMeasure = 0);
   void start();
   void update();
