@@ -3,8 +3,11 @@
 
 #include <Siv3D.hpp>
 
+#include "Utility.hpp"
 #include "ShareData.hpp"
 #include "State.hpp"
+#include "RhythmManager.hpp"
+#include "NoteData.hpp"
 
 class Game :public SceneManager<State, ShareData>::Scene {
 public:
@@ -17,6 +20,9 @@ public:
 
 private:
   Font font;
+
+  RhythmManager rhythmManager;
+  std::vector<NoteData> notes;
 };
 
 #endif // GAME_HPP
