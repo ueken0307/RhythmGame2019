@@ -12,8 +12,8 @@ void MusicSelection::update() {
 
   if (KeyDown.pressed()) {
     if (!downPlusKey) {
-      getData().selected = (getData().selected + 1) % getData().infos.size();
-      DEBUG_PRINTF("%d\n", getData().selected);
+      getData().incSelected();
+      DEBUG_PRINTF("%d\n", getData().getSelected());
     } else {
       DEBUG_PRINTF("%lf\n", KeyDown.pressedDuration().count());
     }
@@ -25,8 +25,8 @@ void MusicSelection::update() {
 
   if (KeyUp.pressed()) {
     if (!downMinusKey) {
-      getData().selected = (getData().selected == 0) ? (getData().selected + getData().infos.size() - 1) : (getData().selected - 1);
-      DEBUG_PRINTF("%d\n", getData().selected);
+      getData().decSelected();
+      DEBUG_PRINTF("%d\n", getData().getSelected());
     }
     else {
       DEBUG_PRINTF("%lf\n", KeyUp.pressedDuration().count());
@@ -40,7 +40,7 @@ void MusicSelection::update() {
 }
 
 void MusicSelection::draw() const {
-  const auto& info = getData().infos[getData().selected];
+  const auto info = getData().infos.at(getData().getSelected());
 
   Rect(200, 200, 200, 200)(TextureAsset(info.getAssetName())).draw();
   font(info.getTitle()).draw(420, 200);
