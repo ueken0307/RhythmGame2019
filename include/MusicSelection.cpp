@@ -15,7 +15,7 @@ void MusicSelection::update() {
   if (KeyDown.pressed()) {
     if (!downPlusKey) {
       getData().incSelected();
-      DEBUG_PRINTF("%d\n", getData().getSelected());
+      DEBUG_PRINTF("%zd\n", getData().getSelected());
     } else {
       DEBUG_PRINTF("%lf\n", KeyDown.pressedDuration().count());
     }
@@ -28,7 +28,7 @@ void MusicSelection::update() {
   if (KeyUp.pressed()) {
     if (!downMinusKey) {
       getData().decSelected();
-      DEBUG_PRINTF("%d\n", getData().getSelected());
+      DEBUG_PRINTF("%zd\n", getData().getSelected());
     }
     else {
       DEBUG_PRINTF("%lf\n", KeyUp.pressedDuration().count());
