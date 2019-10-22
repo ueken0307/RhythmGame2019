@@ -7,7 +7,9 @@ MusicSelection::MusicSelection(const InitData& init) : IScene(init), font(30), d
 
 void MusicSelection::update() {
   if (KeyEnter.down()) {
-    this->changeScene(State::AdjustSpeed);
+    if (getData().infos.at(getData().getSelected()).getPlayLevels().at(getData().getLevelNum()) != 0) {
+      this->changeScene(State::AdjustSpeed);
+    }
   }
 
   if (KeyDown.pressed()) {
@@ -37,6 +39,13 @@ void MusicSelection::update() {
     downMinusKey = false;
   }
 
+  if (KeyLeft.down()) {
+    getData().decLeveNum();
+  }
+
+  if (KeyRight.down()) {
+    getData().incLevelNum();
+  }
 }
 
 void MusicSelection::draw() const {
@@ -46,7 +55,9 @@ void MusicSelection::draw() const {
   font(info.getTitle()).draw(420, 200);
   font(info.getArtist()).draw(420, 240);
   font(info.getBpm()).draw(420, 280);
-  font(info.getPlayLevels()).draw(420, 320);
+  for (int i = 0; i < info.getPlayLevels().size(); ++i) {
+    font(info.getPlayLevels().at(i)).draw(420 + i*40, 320,(i == getData().getLevelNum())? Color(255,0,0): Color(255,255,255));
+  }
   font(info.getFolderPath()).draw(420, 360);
 
   font(U"‘I‹È").draw();
