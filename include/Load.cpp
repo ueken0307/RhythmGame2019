@@ -63,6 +63,7 @@ Load::Load(const InitData& init) : IScene(init), font(20) {
     }
   }
 
+  AudioAsset::Register(U"tap", Resource(U"button.mp3"));
 }
 
 void Load::update() {

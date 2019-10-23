@@ -20,6 +20,7 @@ public:
 
 private:
   Font font;
+  bool isStart;
 
   RhythmManager rhythmManager;
   std::vector<NoteData> notes;

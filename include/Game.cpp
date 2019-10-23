@@ -1,6 +1,6 @@
 #include "Game.hpp"
 
-Game::Game(const InitData& init) : IScene(init), font(30) {
+Game::Game(const InitData& init) : IScene(init), font(30), isStart(false) {
   JSONReader reader(getData().getScoreFileName());
   DEBUG_PRINTF("%s",getData().getScoreFileName().narrow().c_str());
   if (!reader) {
@@ -36,11 +36,45 @@ Game::Game(const InitData& init) : IScene(init), font(30) {
 
   getData().result.reset(totalNotes);
 
+  //音楽のロード、初期位置設定
+  AudioAsset::Preload(getData().getSelectedInfo().getAssetName());
+  AudioAsset(getData().getSelectedInfo().getAssetName()).setPosSec(rhythmManager.getMusicInitPos());
+
+  //タップ音のロード
+  AudioAsset::Preload(U"tap");
 }
 
 
 void Game::update() {
+  if (isStart) {
+    rhythmManager.update();
+    if (!AudioAsset(getData().getSelectedInfo().getAssetName()).isPlaying() && 
+      rhythmManager.getSecond() >= rhythmManager.getMusicStartSec()) {
+      AudioAsset(getData().getSelectedInfo().getAssetName()).play();
+    }
+
+    for (auto& i : notes) {
+      if (rhythmManager.getStartMeasure() * 9600 <= i.count && !i.isEndEffect && abs(i.second - rhythmManager.getSecond()) <= (1/60.0)*2) {
+        AudioAsset(U"tap").stop();
+        AudioAsset(U"tap").play();
+        i.isEndEffect = true;
+      }
+    }
+
+  } else {
+    if (KeySpace.pressed()) {
+      isStart = true;
+      rhythmManager.start();
+
+      if (rhythmManager.getSecond() >= rhythmManager.getMusicStartSec()) {
+        AudioAsset(getData().getSelectedInfo().getAssetName()).play();
+      }
+    }
+  }
+
   if (KeyEnter.pressed()) {
+    AudioAsset(getData().getSelectedInfo().getAssetName()).stop();
+    AudioAsset::Release(getData().getSelectedInfo().getAssetName());
     this->changeScene(State::Result);
   }
 }

@@ -56,6 +56,8 @@ Resource(engine/soundfont/GMGSx.sf2.zstdcmp)
 // Siv3D App Resources (Your application resources here)
 //
 //////////////////////////////////////////////////////
+//effect sound
+Resource(button.mp3)
 
 
 
