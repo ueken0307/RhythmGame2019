@@ -24,6 +24,7 @@ public:
   double getSecond() const { return timer.nowSecond(totalOffset); }
   double BtoS(int count) const;
 
+  int getStartMeasure() { return startMeasure; };
   double getMusicInitPos() { return musicInitPos; };
   double getMusicStartSec() { return musicStartSec; };
 
