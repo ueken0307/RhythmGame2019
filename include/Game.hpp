@@ -21,6 +21,7 @@ public:
 private:
   Font font;
   bool isStart;
+  std::array<Line,5> vLines; //vertical lines
 
   RhythmManager rhythmManager;
   std::vector<NoteData> notes;

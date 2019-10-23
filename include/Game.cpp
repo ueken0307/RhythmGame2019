@@ -1,5 +1,13 @@
 #include "Game.hpp"
 
+#define UP_Y 0
+#define BOTTOM_Y 1080
+#define UP_W  250
+#define BOTTOM_W 1400
+#define CENTER_X (1920/2)
+#define JUDGE_LINE_H 1000
+#define JUDGE_LINE_W ((BOTTOM_W-UP_W)*( JUDGE_LINE_H /(double)(BOTTOM_Y-UP_Y)) + UP_W)
+
 Game::Game(const InitData& init) : IScene(init), font(30), isStart(false) {
   JSONReader reader(getData().getScoreFileName());
   DEBUG_PRINTF("%s",getData().getScoreFileName().narrow().c_str());
@@ -42,6 +50,11 @@ Game::Game(const InitData& init) : IScene(init), font(30), isStart(false) {
 
   //タップ音のロード
   AudioAsset::Preload(U"tap");
+
+  for (size_t i = 0; i < vLines.size(); ++i) {
+    vLines.at(i) = Line({CENTER_X - (UP_W/2)  + ((double)UP_W / (vLines.size() - 1)) * i, UP_Y},
+      { CENTER_X - (BOTTOM_W / 2) + ((double)BOTTOM_W / (vLines.size() - 1)) * i, BOTTOM_Y});
+  }
 }
 
 
@@ -80,6 +93,11 @@ void Game::update() {
 }
 
 void Game::draw() const {
+  for (auto& i : vLines) {
+    i.draw();
+  }
+  Line({ CENTER_X - JUDGE_LINE_W / 2.0, JUDGE_LINE_H }, { CENTER_X + JUDGE_LINE_W / 2.0, JUDGE_LINE_H }).draw();
+
   font(U"ゲーム").draw();
 }
 
