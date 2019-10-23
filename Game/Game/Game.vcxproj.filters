@@ -111,9 +111,6 @@
     <ClCompile Include="..\..\include\NoteData.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\include\RhythmGameManager.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\include\RhythmManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -404,9 +401,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\include\NoteData.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\RhythmGameManager.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\include\RhythmManager.hpp">
