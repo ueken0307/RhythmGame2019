@@ -7,7 +7,8 @@ BpmData::BpmData(int count, double bpm,int beat) {
   this->beat = beat;
 }
 
-RhythmManager::RhythmManager(std::vector<BpmData> &bpmDatas,double offsetSecond,int startMeasure){
+RhythmManager::RhythmManager(std::vector<BpmData>& bpmDatas, double scoreOffset, int startMeasure, double beforeSec) :
+  scoreOffset(scoreOffset), startMeasure(startMeasure), beforeSec(beforeSec) {
 
   //BPM•Ï‰»•b‚ÌŽæ“¾
   this->bpmDatas.push_back(BpmData(bpmDatas[0].count, bpmDatas[0].bpm, bpmDatas[0].beat));
@@ -18,9 +19,24 @@ RhythmManager::RhythmManager(std::vector<BpmData> &bpmDatas,double offsetSecond,
     this->changeTimes.push_back((60.0 / bpmDatas[i-1].bpm)*((bpmDatas[i].count - bpmDatas[i-1].count) / (9600.0/bpmDatas[i-1].beat)) + changeTimes[i-1]);
   }
 
-  startSecond = BtoS(9600 * startMeasure);
-  this->offsetSecond = offsetSecond + startSecond;
-  bmsCount = static_cast<int>(timer.nowSecond(offsetSecond) * (this->bpmDatas[0].bpm / 60.0) * (9600.0 / this->bpmDatas[0].beat));
+  if (startMeasure > 0) {
+    double tmp = BtoS(startMeasure * 9600) - scoreOffset - beforeSec;
+    if (tmp >= 0.0) {
+      totalOffset = tmp;
+      musicInitPos = tmp + beforeSec;
+      musicStartSec = 0.0;
+    } else {
+      totalOffset = -scoreOffset - beforeSec;
+      musicInitPos = 0;
+      musicStartSec = -tmp;
+    }
+  } else {
+    totalOffset = -scoreOffset - beforeSec;
+    musicInitPos = 0;
+    musicStartSec = beforeSec;
+  }
+
+  bmsCount = static_cast<int>(timer.nowSecond(totalOffset) * (this->bpmDatas[0].bpm / 60.0) * (9600.0 / this->bpmDatas[0].beat));
 }
 
 double RhythmManager::BtoS(int count) const {
@@ -45,12 +61,12 @@ void RhythmManager::update() {
 
   int tmp = 0;
   for (int i = 0; i < changeTimes.size(); ++i) {
-    if (changeTimes[i] <= timer.nowSecond(offsetSecond)) {
+    if (changeTimes[i] <= timer.nowSecond(totalOffset)) {
       tmp = i;
     } else {
       break;
     }
   }
 
-  bmsCount = bpmDatas[tmp].count + static_cast<int>((timer.nowSecond(offsetSecond) - changeTimes[tmp]) * (bpmDatas[tmp].bpm / 60.0) * (9600.0 / bpmDatas[tmp].beat));
+  bmsCount = bpmDatas[tmp].count + static_cast<int>((timer.nowSecond(totalOffset) - changeTimes[tmp]) * (bpmDatas[tmp].bpm / 60.0) * (9600.0 / bpmDatas[tmp].beat));
 }

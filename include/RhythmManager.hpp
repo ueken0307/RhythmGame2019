@@ -16,22 +16,26 @@ public:
 
 class RhythmManager {
 public:
-  RhythmManager(): bpmDatas(std::vector<BpmData>()), offsetSecond(0), startSecond(0), bmsCount(0) {};
-  RhythmManager(std::vector<BpmData> &bpmDatas, double offsetSecond = 0.0, int startMeasure = 0);
+  RhythmManager(): bpmDatas(std::vector<BpmData>()), bmsCount(0), scoreOffset(0),beforeSec(0), totalOffset(0), startMeasure(0), musicInitPos(0), musicStartSec(0) {};
+  RhythmManager(std::vector<BpmData> &bpmDatas, double scoreOffset, int startMeasure, double beforeSec);
   void start();
   void update();
-  double getStartSecond() const { return startSecond; };
   int getBmsCount() const { return bmsCount; };
-  double getSecond() const { return timer.nowSecond(offsetSecond); }
+  double getSecond() const { return timer.nowSecond(totalOffset); }
   double BtoS(int count) const;
+
+  double getMusicInitPos() { return musicInitPos; };
+  double getMusicStartSec() { return musicStartSec; };
 
 private:
   std::vector<BpmData> bpmDatas;
   std::vector<double> changeTimes;
   TimeManager timer;
-  double offsetSecond;
-  double startSecond;
   int bmsCount;
+
+  double scoreOffset, beforeSec, totalOffset;
+  int startMeasure;
+  double musicInitPos,musicStartSec;
 };
 
 #endif // RHYTHM_MANAGER_HPP

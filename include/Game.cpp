@@ -13,7 +13,15 @@ Game::Game(const InitData& init) : IScene(init), font(30) {
     bpms.push_back(BpmData(i[U"time"].get<int32>(), i[U"bpm"].get<double>(), i[U"beat"].get<int32>()));
   }
 
-  rhythmManager = RhythmManager(bpms);
+  //譜面のオフセット
+  double scoreOffset = getData().getSelectedInfo().getOffset();
+  //開始小節
+  double startMeasure = 0;
+  //譜面が始まる前のの時間
+  double beforeSec = 1.0;
+
+  //RhythmManagerの初期化
+  rhythmManager = RhythmManager(bpms,scoreOffset,startMeasure,beforeSec);
 
   //---------note--------
   int totalNotes = 0;
