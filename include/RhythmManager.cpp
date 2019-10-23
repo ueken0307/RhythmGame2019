@@ -20,20 +20,19 @@ RhythmManager::RhythmManager(std::vector<BpmData>& bpmDatas, double scoreOffset,
   }
 
   if (startMeasure > 0) {
-    double tmp = BtoS(startMeasure * 9600) - scoreOffset - beforeSec;
-    if (tmp >= 0.0) {
-      totalOffset = tmp;
-      musicInitPos = tmp + beforeSec;
-      musicStartSec = 0.0;
+    if (BtoS(startMeasure * 9600) - beforeSec >= 0.0) {
+      totalOffset = BtoS(startMeasure * 9600) - scoreOffset - beforeSec;
+      musicInitPos = BtoS(startMeasure * 9600) - beforeSec;
+      musicStartSec = BtoS(startMeasure * 9600) - scoreOffset - beforeSec;
     } else {
-      totalOffset = -scoreOffset - beforeSec;
+      totalOffset = BtoS(startMeasure * 9600) - scoreOffset - beforeSec;
       musicInitPos = 0;
-      musicStartSec = -tmp;
+      musicStartSec = -scoreOffset;
     }
   } else {
     totalOffset = -scoreOffset - beforeSec;
     musicInitPos = 0;
-    musicStartSec = beforeSec;
+    musicStartSec = -scoreOffset;
   }
 
   bmsCount = static_cast<int>(timer.nowSecond(totalOffset) * (this->bpmDatas[0].bpm / 60.0) * (9600.0 / this->bpmDatas[0].beat));
