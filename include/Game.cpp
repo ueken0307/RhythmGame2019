@@ -1,12 +1,20 @@
 #include "Game.hpp"
 
+#define _USE_MATH_DEFINES
+#include <math.h>
+
 #define UP_Y 0
 #define BOTTOM_Y 1080
 #define UP_W  250
 #define BOTTOM_W 1400
 #define CENTER_X (1920/2)
-#define JUDGE_LINE_H 1000
-#define JUDGE_LINE_W ((BOTTOM_W-UP_W)*( JUDGE_LINE_H /(double)(BOTTOM_Y-UP_Y)) + UP_W)
+#define JUDGE_LINE_Y BOTTOM_Y
+#define JUDGE_LINE_W ((BOTTOM_W-UP_W)*( JUDGE_LINE_Y /(double)(BOTTOM_Y-UP_Y)) + UP_W)
+
+#define START_NOTE_H 1
+#define FINAL_NOTE_H 30
+
+#define NOTE_SPEED 0.7
 
 Game::Game(const InitData& init) : IScene(init), font(30), isStart(false) {
   JSONReader reader(getData().getScoreFileName());
@@ -96,8 +104,19 @@ void Game::draw() const {
   for (auto& i : vLines) {
     i.draw();
   }
-  Line({ CENTER_X - JUDGE_LINE_W / 2.0, JUDGE_LINE_H }, { CENTER_X + JUDGE_LINE_W / 2.0, JUDGE_LINE_H }).draw();
 
+  Line({ CENTER_X - JUDGE_LINE_W / 2.0, JUDGE_LINE_Y },
+    { CENTER_X + JUDGE_LINE_W / 2.0, JUDGE_LINE_Y }).draw(4,Color(220,30,30));
+
+  for (const auto& i : notes) {
+    if (!i.isEndEffect && rhythmManager.getSecond() + NOTE_SPEED - i.second >= 0) {
+      getNoteQuad(i).draw();
+    }
+    if (rhythmManager.getSecond() + NOTE_SPEED - i.second < 0) {
+      break;
+    }
+  }
+ 
   font(U"ƒQ[ƒ€").draw();
 }
 
@@ -107,4 +126,62 @@ void Game::drawFadeIn(double t) const {
 
 void Game::drawFadeOut(double t) const {
   draw();
+}
+
+Quad Game::getNoteQuad(const NoteData &note) const {
+  int lane = note.lane;
+  double second = note.second;
+
+  int centerY = getNoteY(second);
+  int noteHeight = getNoteHeight(centerY);
+  int upY = centerY - noteHeight / 2.0, bottomY = centerY + noteHeight/2.0;
+
+  return Quad(
+    { getNoteStartX(upY,lane),upY }, 
+    { getNoteEndX(upY,lane),upY }, 
+    { getNoteEndX(bottomY,lane),bottomY }, 
+    { getNoteStartX(bottomY,lane),bottomY }
+  );
+
+}
+
+// input (0 < t < 1) output (0 < y < 1)
+double fx(double t) {
+  double start = 1.7 * M_PI;
+  double end = 2.0 * M_PI;
+  double x = start + (end - start) * t;
+  double tmp = abs(sin(end) - sin(start));
+  //double x = ((3.0 / 2.0) * M_PI) + ((1.0 / 2.0) * M_PI) * t;
+  return pow(abs(sin(x) - sin(start))/tmp,2);
+}
+
+int Game::getNoteY(double t) const {
+  return UP_Y + (BOTTOM_Y - UP_Y) * fx((rhythmManager.getSecond() + NOTE_SPEED - t)/NOTE_SPEED);
+}
+
+int Game::getNoteHeight(int y) const {
+  double per = y / (double)(BOTTOM_Y - UP_Y);
+  return START_NOTE_H + (FINAL_NOTE_H - START_NOTE_H) * per;
+}
+
+int Game::getNoteStartX(int y, int lane) const {
+  double per = y / (double)(BOTTOM_Y - UP_Y);
+
+  size_t index;
+  if (lane == 0) index = 0;
+  else if (lane == 5) index = 2;
+  else index = lane - 1;
+
+  return vLines.at(index).begin.x + (vLines.at(index).end.x - vLines.at(index).begin.x) * per;
+}
+
+int Game::getNoteEndX(int y, int lane) const {
+  double per = y / (double)(BOTTOM_Y - UP_Y);
+
+  size_t index;
+  if (lane == 0) index = 2;
+  else if (lane == 5) index = 4;
+  else index = lane;
+
+  return vLines.at(index).begin.x + (vLines.at(index).end.x - vLines.at(index).begin.x) * per;
 }

@@ -19,6 +19,13 @@ public:
   void drawFadeOut(double t) const override;
 
 private:
+  Quad getNoteQuad(const NoteData &note) const;
+  int getNoteY(double t) const;
+  int getNoteHeight(int y) const;
+  int getNoteStartX(int y, int lane) const;
+  int getNoteEndX(int y, int lane) const;
+
+
   Font font;
   bool isStart;
   std::array<Line,5> vLines; //vertical lines
