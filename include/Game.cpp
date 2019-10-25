@@ -63,12 +63,18 @@ Game::Game(const InitData& init) : IScene(init), font(30), isStart(false) {
     vLines.at(i) = Line({CENTER_X - (UP_W/2)  + ((double)UP_W / (vLines.size() - 1)) * i, UP_Y},
       { CENTER_X - (BOTTOM_W / 2) + ((double)BOTTOM_W / (vLines.size() - 1)) * i, BOTTOM_Y});
   }
+
+  laneKeys = {KeyS, KeyD, KeyF, KeyJ, KeyK, KeyL};
+  beforeKeyStatus.fill(false);
+
 }
 
 
 void Game::update() {
   if (isStart) {
     rhythmManager.update();
+    input();
+
     if (!AudioAsset(getData().getSelectedInfo().getAssetName()).isPlaying() && 
       rhythmManager.getSecond() >= rhythmManager.getMusicStartSec()) {
       AudioAsset(getData().getSelectedInfo().getAssetName()).play();
@@ -126,6 +132,30 @@ void Game::drawFadeIn(double t) const {
 
 void Game::drawFadeOut(double t) const {
   draw();
+}
+
+void Game::input() {
+  for (size_t i = 0; i < laneKeys.size(); ++i) {
+    if (laneKeys.at(i).pressed()) {
+      if (!beforeKeyStatus.at(i)) {
+        judge(i);
+        DEBUG_PRINTF("%zd\n", i);
+      }
+      else {
+        DEBUG_PRINTF("%lf\n", laneKeys.at(i).pressedDuration().count());
+      }
+
+      beforeKeyStatus.at(i) = true;
+    }
+    else {
+      beforeKeyStatus.at(i) = false;
+    }
+  }
+
+}
+
+void Game::judge(size_t lane) {
+
 }
 
 Quad Game::getNoteQuad(const NoteData &note) const {

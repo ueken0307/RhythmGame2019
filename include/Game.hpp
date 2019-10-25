@@ -19,6 +19,9 @@ public:
   void drawFadeOut(double t) const override;
 
 private:
+  void input();
+  void judge(size_t lane);
+
   Quad getNoteQuad(const NoteData &note) const;
   int getNoteY(double t) const;
   int getNoteHeight(int y) const;
@@ -32,6 +35,9 @@ private:
 
   RhythmManager rhythmManager;
   std::vector<NoteData> notes;
+
+  std::array<Key, 6> laneKeys;
+  std::array<bool, 6> beforeKeyStatus;
 };
 
 #endif // GAME_HPP
