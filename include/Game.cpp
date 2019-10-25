@@ -32,6 +32,16 @@ double convertRange(double srcStart, double srcEnd, double srcValue, double dstS
   return per2v(dstStart,dstEnd,per);
 }
 
+// (0 < input < 1)  (0 < output < 1)
+double noteYFunc(double input) {
+  double start = 1.7 * M_PI;
+  double end = 2.0 * M_PI;
+  double x = per2v(start, end, input);
+  double tmp = abs(sin(end) - sin(start));
+  //double x = ((3.0 / 2.0) * M_PI) + ((1.0 / 2.0) * M_PI) * t;
+  return pow(abs(sin(x) - sin(start)) / tmp, 2);
+}
+
 Game::Game(const InitData& init) : IScene(init), font(30), isStart(false) {
   JSONReader reader(getData().getScoreFileName());
   DEBUG_PRINTF("%s",getData().getScoreFileName().narrow().c_str());
@@ -189,16 +199,6 @@ Quad Game::getNoteQuad(const NoteData &note) const {
     { getNoteStartX(bottomY,lane),bottomY }
   );
 
-}
-
-// (0 < input < 1)  (0 < output < 1)
-double noteYFunc(double input) {
-  double start = 1.7 * M_PI;
-  double end = 2.0 * M_PI;
-  double x = per2v(start,end,input);
-  double tmp = abs(sin(end) - sin(start));
-  //double x = ((3.0 / 2.0) * M_PI) + ((1.0 / 2.0) * M_PI) * t;
-  return pow(abs(sin(x) - sin(start))/tmp,2);
 }
 
 int Game::getNoteY(double t) const {
