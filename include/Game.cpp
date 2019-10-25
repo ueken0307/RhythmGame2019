@@ -16,6 +16,22 @@
 
 #define NOTE_SPEED 0.7
 
+// x (start ~ end)
+double x2per(double start, double end, double x) {
+  return abs(x - start) / abs(end - start);
+}
+
+//0 < per < 1
+double per2x(double start, double end, double per) {
+  return start + (end - start) * per;
+}
+
+// srcX (srcStart ~ srcEnd)
+double convertRange(double srcStart, double srcEnd, double srcX, double dstStart, double dstEnd) {
+  double per = x2per(srcStart, srcEnd, srcX);
+  return per2x(dstStart,dstEnd,per);
+}
+
 Game::Game(const InitData& init) : IScene(init), font(30), isStart(false) {
   JSONReader reader(getData().getScoreFileName());
   DEBUG_PRINTF("%s",getData().getScoreFileName().narrow().c_str());
@@ -179,39 +195,34 @@ Quad Game::getNoteQuad(const NoteData &note) const {
 double fx(double t) {
   double start = 1.7 * M_PI;
   double end = 2.0 * M_PI;
-  double x = start + (end - start) * t;
+  double x = per2x(start,end,t);
   double tmp = abs(sin(end) - sin(start));
   //double x = ((3.0 / 2.0) * M_PI) + ((1.0 / 2.0) * M_PI) * t;
   return pow(abs(sin(x) - sin(start))/tmp,2);
 }
 
 int Game::getNoteY(double t) const {
-  return UP_Y + (BOTTOM_Y - UP_Y) * fx((rhythmManager.getSecond() + NOTE_SPEED - t)/NOTE_SPEED);
+  return convertRange(0,1, fx((rhythmManager.getSecond() + NOTE_SPEED - t) / NOTE_SPEED),UP_Y,BOTTOM_Y);
 }
 
 int Game::getNoteHeight(int y) const {
-  double per = y / (double)(BOTTOM_Y - UP_Y);
-  return START_NOTE_H + (FINAL_NOTE_H - START_NOTE_H) * per;
+  return convertRange(UP_Y, BOTTOM_Y, y, START_NOTE_H, FINAL_NOTE_H);
 }
 
 int Game::getNoteStartX(int y, int lane) const {
-  double per = y / (double)(BOTTOM_Y - UP_Y);
-
   size_t index;
   if (lane == 0) index = 0;
   else if (lane == 5) index = 2;
   else index = lane - 1;
 
-  return vLines.at(index).begin.x + (vLines.at(index).end.x - vLines.at(index).begin.x) * per;
+  return convertRange(UP_Y, BOTTOM_Y, y, vLines.at(index).begin.x, vLines.at(index).end.x);
 }
 
 int Game::getNoteEndX(int y, int lane) const {
-  double per = y / (double)(BOTTOM_Y - UP_Y);
-
   size_t index;
   if (lane == 0) index = 2;
   else if (lane == 5) index = 4;
   else index = lane;
 
-  return vLines.at(index).begin.x + (vLines.at(index).end.x - vLines.at(index).begin.x) * per;
+  return convertRange(UP_Y, BOTTOM_Y, y, vLines.at(index).begin.x, vLines.at(index).end.x);
 }
