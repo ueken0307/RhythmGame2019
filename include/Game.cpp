@@ -179,7 +179,7 @@ Quad Game::getNoteQuad(const NoteData &note) const {
   double second = note.second;
 
   int centerY = getNoteY(second);
-  int noteHeight = getNoteHeight(centerY);
+  int noteHeight = getNoteHeight(second);
   int upY = centerY - noteHeight / 2.0, bottomY = centerY + noteHeight/2.0;
 
   return Quad(
@@ -205,8 +205,8 @@ int Game::getNoteY(double t) const {
   return convertRange(0,1, fx((rhythmManager.getSecond() + NOTE_SPEED - t) / NOTE_SPEED),UP_Y,BOTTOM_Y);
 }
 
-int Game::getNoteHeight(int y) const {
-  return convertRange(UP_Y, BOTTOM_Y, y, START_NOTE_H, FINAL_NOTE_H);
+int Game::getNoteHeight(double t) const {
+  return convertRange(0, 1, fx((rhythmManager.getSecond() + NOTE_SPEED - t) / NOTE_SPEED), START_NOTE_H, FINAL_NOTE_H);
 }
 
 int Game::getNoteStartX(int y, int lane) const {

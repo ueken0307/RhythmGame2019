@@ -24,7 +24,7 @@ private:
 
   Quad getNoteQuad(const NoteData &note) const;
   int getNoteY(double t) const;
-  int getNoteHeight(int y) const;
+  int getNoteHeight(double t) const;
   int getNoteStartX(int y, int lane) const;
   int getNoteEndX(int y, int lane) const;
 
