@@ -3,16 +3,16 @@
 #define _USE_MATH_DEFINES
 #include <math.h>
 
-#define UP_Y 0
-#define BOTTOM_Y 1080
-#define UP_W  250
-#define BOTTOM_W 1400
-#define CENTER_X (1920/2)
-#define JUDGE_LINE_Y 1000
-#define JUDGE_LINE_W ((BOTTOM_W-UP_W)*( JUDGE_LINE_Y /(double)(BOTTOM_Y-UP_Y)) + UP_W)
 
-#define START_NOTE_H 1
-#define FINAL_NOTE_H 30
+constexpr int centerX = 1920 / 2;
+constexpr int upY = 0;
+constexpr int bottomY = 1080;
+constexpr int upW = 250;
+constexpr int bottomW = 1400;
+constexpr int judgeLineY = 1000;
+constexpr int judgeLineW = convertRange(upY,bottomY,judgeLineY,upW,bottomW);
+constexpr int startNoteH = 1;
+constexpr int endNoteH = 30;
 
 #define NOTE_SPEED 10
 
@@ -29,9 +29,9 @@ double noteYFunc(double input) {
 }
 
 double calcJudgeLineValue(double start, double end) {
-  //static const double judgeLinePer = x2per(UP_Y, BOTTOM_Y, JUDGE_LINE_Y);
+  //static const double judgeLinePer = x2per(upY, bottomY, judgeLineY);
   double x = start + (end - start) / 2.0;
-  double diff = convertRange(0, 1, noteYFunc(x), UP_Y, BOTTOM_Y) - JUDGE_LINE_Y;
+  double diff = convertRange(0, 1, noteYFunc(x), upY, bottomY) - judgeLineY;
   DEBUG_PRINTF("%lf\n", diff);
 
   if (abs(diff) < 0.5) {
@@ -87,8 +87,8 @@ Game::Game(const InitData& init) : IScene(init), font(30), isStart(false) {
   AudioAsset::Preload(U"tap");
 
   for (size_t i = 0; i < vLines.size(); ++i) {
-    vLines.at(i) = Line({CENTER_X - (UP_W/2)  + ((double)UP_W / (vLines.size() - 1)) * i, UP_Y},
-      { CENTER_X - (BOTTOM_W / 2) + ((double)BOTTOM_W / (vLines.size() - 1)) * i, BOTTOM_Y});
+    vLines.at(i) = Line({centerX - (upW/2)  + ((double)upW / (vLines.size() - 1)) * i, upY},
+      { centerX - (bottomW / 2) + ((double)bottomW / (vLines.size() - 1)) * i, bottomY});
   }
 
   laneKeys = {KeyS, KeyD, KeyF, KeyJ, KeyK, KeyL};
@@ -140,8 +140,8 @@ void Game::draw() const {
     i.draw();
   }
 
-  Line({ CENTER_X - JUDGE_LINE_W / 2.0, JUDGE_LINE_Y },
-    { CENTER_X + JUDGE_LINE_W / 2.0, JUDGE_LINE_Y }).draw(4,Color(220,30,30));
+  Line({ centerX - judgeLineW / 2.0, judgeLineY },
+    { centerX + judgeLineW / 2.0, judgeLineY }).draw(4,Color(220,30,30));
 
   for (const auto& i : notes) {
     if (!i.isEndEffect && rhythmManager.getSecond() + toBottomNoteSpeed - i.second >= 0) {
@@ -206,12 +206,12 @@ Quad Game::getNoteQuad(const NoteData &note) const {
 
 int Game::getNoteY(double t) const {
   double arg = (rhythmManager.getSecond() + NOTE_SPEED - t) / toBottomNoteSpeed;
-  return convertRange(0,1, noteYFunc(arg),UP_Y,BOTTOM_Y);
+  return convertRange(0,1, noteYFunc(arg),upY,bottomY);
 }
 
 int Game::getNoteHeight(double t) const {
   double arg = (rhythmManager.getSecond() + NOTE_SPEED - t) / toBottomNoteSpeed;
-  return convertRange(0, 1, noteYFunc(arg), START_NOTE_H, FINAL_NOTE_H);
+  return convertRange(0, 1, noteYFunc(arg), startNoteH, endNoteH);
 }
 
 int Game::getNoteStartX(int y, int lane) const {
@@ -220,7 +220,7 @@ int Game::getNoteStartX(int y, int lane) const {
   else if (lane == 5) index = 2;
   else index = lane - 1;
 
-  return convertRange(UP_Y, BOTTOM_Y, y, vLines.at(index).begin.x, vLines.at(index).end.x);
+  return convertRange(upY, bottomY, y, vLines.at(index).begin.x, vLines.at(index).end.x);
 }
 
 int Game::getNoteEndX(int y, int lane) const {
@@ -229,5 +229,5 @@ int Game::getNoteEndX(int y, int lane) const {
   else if (lane == 5) index = 4;
   else index = lane;
 
-  return convertRange(UP_Y, BOTTOM_Y, y, vLines.at(index).begin.x, vLines.at(index).end.x);
+  return convertRange(upY, bottomY, y, vLines.at(index).begin.x, vLines.at(index).end.x);
 }
