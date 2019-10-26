@@ -18,22 +18,6 @@
 
 double toBottomNoteSpeed = NOTE_SPEED;
 
-// value (start ~ end)
-double v2per(double start, double end, double value) {
-  return abs(value - start) / abs(end - start);
-}
-
-//0 < percent < 1
-double per2v(double start, double end, double percent) {
-  return start + (end - start) * percent;
-}
-
-// srcValue (srcStart ~ srcEnd)
-double convertRange(double srcStart, double srcEnd, double srcValue, double dstStart, double dstEnd) {
-  double per = v2per(srcStart, srcEnd, srcValue);
-  return per2v(dstStart,dstEnd,per);
-}
-
 // (0 < input < 1)  (0 < output < 1)
 double noteYFunc(double input) {
   double start = 1.7 * M_PI;
