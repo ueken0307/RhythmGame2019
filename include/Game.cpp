@@ -14,10 +14,6 @@ constexpr int judgeLineW = convertRange(upY,bottomY,judgeLineY,upW,bottomW);
 constexpr int startNoteH = 1;
 constexpr int endNoteH = 30;
 
-#define NOTE_SPEED 10
-
-double toBottomNoteSpeed = NOTE_SPEED;
-
 // (0 < input < 1)  (0 < output < 1)
 double noteYFunc(double input) {
   double start = 1.7 * M_PI;
@@ -93,9 +89,9 @@ Game::Game(const InitData& init) : IScene(init), font(30), isStart(false) {
 
   laneKeys = {KeyS, KeyD, KeyF, KeyJ, KeyK, KeyL};
   beforeKeyStatus.fill(false);
-
-  //todo –ˆ‰ñŒvŽZ‚µ‚È‚¢‚æ‚¤‚É‚·‚é
-  toBottomNoteSpeed = NOTE_SPEED/calcJudgeLineValue(0, 1);
+  
+  toJudgeLineNoteSpeed = getData().getNoteSpeed();
+  toBottomNoteSpeed = toJudgeLineNoteSpeed /calcJudgeLineValue(0, 1);
 }
 
 
@@ -205,12 +201,12 @@ Quad Game::getNoteQuad(const NoteData &note) const {
 }
 
 int Game::getNoteY(double t) const {
-  double arg = (rhythmManager.getSecond() + NOTE_SPEED - t) / toBottomNoteSpeed;
+  double arg = (rhythmManager.getSecond() + toJudgeLineNoteSpeed - t) / toBottomNoteSpeed;
   return convertRange(0,1, noteYFunc(arg),upY,bottomY);
 }
 
 int Game::getNoteHeight(double t) const {
-  double arg = (rhythmManager.getSecond() + NOTE_SPEED - t) / toBottomNoteSpeed;
+  double arg = (rhythmManager.getSecond() + toJudgeLineNoteSpeed - t) / toBottomNoteSpeed;
   return convertRange(0, 1, noteYFunc(arg), startNoteH, endNoteH);
 }
 

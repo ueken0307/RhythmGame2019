@@ -32,6 +32,8 @@ private:
   Font font;
   bool isStart;
   std::array<Line,5> vLines; //vertical lines
+  double toJudgeLineNoteSpeed;
+  double toBottomNoteSpeed;
 
   RhythmManager rhythmManager;
   std::vector<NoteData> notes;

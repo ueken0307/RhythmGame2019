@@ -44,6 +44,7 @@ public:
     selected = 0;
     levelNum = 0;
     levelFileName = { U"/easy.json",U"/normal.json",U"/hard.json" };
+    noteSpeed = 10;
   };
 
   std::vector<MusicInfo> infos;
@@ -76,6 +77,10 @@ public:
     }
   };
 
+  double getNoteSpeed() {
+    return noteSpeed;
+  };
+
   String getScoreFileName() {
     return infos.at(selected).getFolderPath() + levelFileName.at(levelNum);
   }
@@ -89,6 +94,7 @@ public:
 
 private:
   size_t selected, levelNum;
+  double noteSpeed;
 };
 
 
