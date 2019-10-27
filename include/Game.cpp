@@ -69,6 +69,7 @@ Game::Game(const InitData& init) : IScene(init), font(30), isStart(false), isMus
       NoteData(
         i[U"time"].get<int32>(),
         rhythmManager.BtoS(i[U"time"].get<int32>()),
+        rhythmManager.BtoS(i[U"time"].get<int32>() + i[U"length"].get<int32>()),
         i[U"lane"].get<int32>(),
         i[U"length"].get<int32>()
       )

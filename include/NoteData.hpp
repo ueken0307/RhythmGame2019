@@ -3,9 +3,10 @@
 
 class NoteData {
 public:
-  NoteData(int count, double second, int lane, int length);
+  NoteData(int count, double second, double endSecond, int lane, int length);
   int count;
   double second;
+  double endSecond;
   int lane;
   int length;
   bool isJudgeEnded;
