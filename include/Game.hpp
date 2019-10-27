@@ -19,6 +19,7 @@ public:
   void drawFadeOut(double t) const override;
 
 private:
+  void drawNotes() const;
   void input();
   void judge(size_t lane);
   double getDiff(double noteSecond);

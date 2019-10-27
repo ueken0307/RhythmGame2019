@@ -150,19 +150,7 @@ void Game::draw() const {
   Line({ centerX - judgeLineW / 2.0, judgeLineY },
     { centerX + judgeLineW / 2.0, judgeLineY }).draw(4,Color(220,30,30));
 
-  for (const auto& laneNotes : {allNotes.at(0), allNotes.at(5) ,allNotes.at(1) ,allNotes.at(2) ,allNotes.at(3) ,allNotes.at(4) }) {
-    for (const auto& note : laneNotes) {
-      double diff = rhythmManager.getSecond() + toBottomNoteSpeed - note.second;
-      if (!note.isJudgeEnded && diff >= 0) {
-        getNoteQuad(note).draw((note.lane == 0 || note.lane == 5)? Color(0,255,0) : Color(255,255,255));
-      }
-      if (diff < 0) {
-        break;
-      }
-    }
-  }
- 
-  font(U"ƒQ[ƒ€").draw();
+  drawNotes();
 }
 
 void Game::drawFadeIn(double t) const {
@@ -171,6 +159,20 @@ void Game::drawFadeIn(double t) const {
 
 void Game::drawFadeOut(double t) const {
   draw();
+}
+
+void Game::drawNotes() const{
+  for (const auto& laneNotes : { allNotes.at(0), allNotes.at(5) ,allNotes.at(1) ,allNotes.at(2) ,allNotes.at(3) ,allNotes.at(4) }) {
+    for (const auto& note : laneNotes) {
+      double diff = rhythmManager.getSecond() + toBottomNoteSpeed - note.second;
+      if (!note.isJudgeEnded && diff >= 0) {
+        getNoteQuad(note).draw((note.lane == 0 || note.lane == 5) ? Color(0, 255, 0) : Color(255, 255, 255));
+      }
+      if (diff < 0) {
+        break;
+      }
+    }
+  }
 }
 
 void Game::input() {
