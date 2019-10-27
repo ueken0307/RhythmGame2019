@@ -27,6 +27,10 @@ public:
   void incJudge(size_t judgeIndex, double timing);
   double getTotalPer();
   double getNowPer();
+  int getMaxCombo();
+  int getJudgeCounts(size_t judgeIndex);
+  std::vector<double>& getJudgeTimings(size_t judgeIndex);
+  int getMissCounts();
 
 private:
   int totalNotes;
@@ -34,7 +38,7 @@ private:
   int maxCombo;
   int missCounts;
   std::array<int, JUDGE_NUM> judgeCounts;
-  std::array<std::vector<double>, JUDGE_NUM> judgeTiming;
+  std::array<std::vector<double>, JUDGE_NUM> judgeTimings;
 
 };
 

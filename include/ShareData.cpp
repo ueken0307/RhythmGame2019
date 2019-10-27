@@ -24,8 +24,9 @@ void ResultData::incMiss() {
 }
 
 void ResultData::incJudge(size_t judgeIndex, double timing) {
+  combo++;
   judgeCounts.at(judgeIndex)++;
-  judgeTiming.at(judgeIndex).push_back(timing);
+  judgeTimings.at(judgeIndex).push_back(timing);
   DEBUG_PRINTF("%s : %lf\n", judges.at(judgeIndex).name.narrow().c_str(), timing);
 }
 
@@ -48,4 +49,20 @@ double ResultData::getNowPer() {
   }
 
   return sum / noteNum;
+}
+
+int ResultData::getMaxCombo() {
+  return maxCombo;
+}
+
+int ResultData::getJudgeCounts(size_t judgeIndex) {
+  return judgeCounts.at(judgeIndex);
+}
+
+std::vector<double>& ResultData::getJudgeTimings(size_t judgeIndex) {
+  return judgeTimings.at(judgeIndex);
+}
+
+int ResultData::getMissCounts() {
+  return missCounts;
 }
