@@ -39,7 +39,7 @@ double calcJudgeLineValue(double start, double end) {
     (calcJudgeLineValue(start, x));
 }
 
-Game::Game(const InitData& init) : IScene(init), font(30), isStart(false) {
+Game::Game(const InitData& init) : IScene(init), font(30), isStart(false), isMusicStarted(false) {
   JSONReader reader(getData().getScoreFileName());
   DEBUG_PRINTF("%s",getData().getScoreFileName().narrow().c_str());
   if (!reader) {
@@ -82,6 +82,7 @@ Game::Game(const InitData& init) : IScene(init), font(30), isStart(false) {
 
   //音楽のロード、初期位置設定
   AudioAsset::Preload(getData().getSelectedInfo().getAssetName());
+  AudioAsset(getData().getSelectedInfo().getAssetName()).setLoop(false);
   AudioAsset(getData().getSelectedInfo().getAssetName()).setPosSec(rhythmManager.getMusicInitPos());
 
   //タップ音のロード
@@ -106,8 +107,8 @@ void Game::update() {
     input();
     excludeEndedNote();
 
-    if (!AudioAsset(getData().getSelectedInfo().getAssetName()).isPlaying() && 
-      rhythmManager.getSecond() >= rhythmManager.getMusicStartSec()) {
+    if (!isMusicStarted && rhythmManager.getSecond() >= rhythmManager.getMusicStartSec()) {
+      isMusicStarted = true;
       AudioAsset(getData().getSelectedInfo().getAssetName()).play();
     }
 
@@ -127,6 +128,7 @@ void Game::update() {
       rhythmManager.start();
 
       if (rhythmManager.getSecond() >= rhythmManager.getMusicStartSec()) {
+        isMusicStarted = true;
         AudioAsset(getData().getSelectedInfo().getAssetName()).play();
       }
     }

@@ -32,7 +32,7 @@ private:
 
 
   Font font;
-  bool isStart;
+  bool isStart, isMusicStarted;
   std::array<Line,5> vLines; //vertical lines
   double toJudgeLineNoteSpeed;
   double toBottomNoteSpeed;
