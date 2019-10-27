@@ -36,7 +36,7 @@ private:
   double toBottomNoteSpeed;
 
   RhythmManager rhythmManager;
-  std::vector<NoteData> notes;
+  std::array<std::list<NoteData>, 6> allNotes;
 
   std::array<Key, 6> laneKeys;
   std::array<bool, 6> beforeKeyStatus;

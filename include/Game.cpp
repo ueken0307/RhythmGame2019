@@ -65,10 +65,15 @@ Game::Game(const InitData& init) : IScene(init), font(30), isStart(false) {
   //---------note--------
   int totalNotes = 0;
   for (const auto& i : reader[U"notes"].arrayView()) {
-    notes.push_back(
-      NoteData(i[U"time"].get<int32>(), 
+    allNotes.at(i[U"lane"].get<int32>()).push_back(
+      NoteData(
+        i[U"time"].get<int32>(),
         rhythmManager.BtoS(i[U"time"].get<int32>()),
-        i[U"lane"].get<int32>(), i[U"length"].get<int32>()));
+        i[U"lane"].get<int32>(),
+        i[U"length"].get<int32>()
+      )
+    );
+
     totalNotes++;
     if (i[U"length"].get<int32>() != 0) totalNotes++;
   }
@@ -105,11 +110,13 @@ void Game::update() {
       AudioAsset(getData().getSelectedInfo().getAssetName()).play();
     }
 
-    for (auto& i : notes) {
-      if (rhythmManager.getStartMeasure() * 9600 <= i.count && !i.isEndEffect && abs(i.second - rhythmManager.getSecond()) <= (1/60.0)*2) {
-        AudioAsset(U"tap").stop();
-        AudioAsset(U"tap").play();
-        i.isEndEffect = true;
+    for (auto& laneNotes : allNotes) {
+      for (auto& note : laneNotes) {
+        if (rhythmManager.getStartMeasure() * 9600 <= note.count && !note.isEndEffect && abs(note.second - rhythmManager.getSecond()) <= (1 / 60.0) * 2) {
+          AudioAsset(U"tap").stop();
+          AudioAsset(U"tap").play();
+          note.isEndEffect = true;
+        }
       }
     }
 
@@ -139,12 +146,15 @@ void Game::draw() const {
   Line({ centerX - judgeLineW / 2.0, judgeLineY },
     { centerX + judgeLineW / 2.0, judgeLineY }).draw(4,Color(220,30,30));
 
-  for (const auto& i : notes) {
-    if (!i.isEndEffect && rhythmManager.getSecond() + toBottomNoteSpeed - i.second >= 0) {
-      getNoteQuad(i).draw();
-    }
-    if (rhythmManager.getSecond() + toBottomNoteSpeed - i.second < 0) {
-      break;
+  for (const auto& laneNotes : allNotes) {
+    for (const auto& note : laneNotes) {
+      double diff = rhythmManager.getSecond() + toBottomNoteSpeed - note.second;
+      if (!note.isEndEffect && diff >= 0) {
+        getNoteQuad(note).draw();
+      }
+      if (diff < 0) {
+        break;
+      }
     }
   }
  
