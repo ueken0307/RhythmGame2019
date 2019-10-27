@@ -104,6 +104,7 @@ void Game::update() {
   if (isStart) {
     rhythmManager.update();
     input();
+    excludeEndedNote();
 
     if (!AudioAsset(getData().getSelectedInfo().getAssetName()).isPlaying() && 
       rhythmManager.getSecond() >= rhythmManager.getMusicStartSec()) {
@@ -112,10 +113,10 @@ void Game::update() {
 
     for (auto& laneNotes : allNotes) {
       for (auto& note : laneNotes) {
-        if (rhythmManager.getStartMeasure() * 9600 <= note.count && !note.isEndEffect && abs(note.second - rhythmManager.getSecond()) <= (1 / 60.0) * 2) {
-          AudioAsset(U"tap").stop();
-          AudioAsset(U"tap").play();
-          note.isEndEffect = true;
+        if (rhythmManager.getStartMeasure() * 9600 <= note.count && !note.isJudgeEnded && abs(note.second - rhythmManager.getSecond()) <= (1 / 60.0) * 2) {
+          //AudioAsset(U"tap").stop();
+          //AudioAsset(U"tap").play();
+          //note.isJudgeEnded = true;
         }
       }
     }
@@ -149,7 +150,7 @@ void Game::draw() const {
   for (const auto& laneNotes : allNotes) {
     for (const auto& note : laneNotes) {
       double diff = rhythmManager.getSecond() + toBottomNoteSpeed - note.second;
-      if (!note.isEndEffect && diff >= 0) {
+      if (!note.isJudgeEnded && diff >= 0) {
         getNoteQuad(note).draw();
       }
       if (diff < 0) {
@@ -174,10 +175,10 @@ void Game::input() {
     if (laneKeys.at(i).pressed()) {
       if (!beforeKeyStatus.at(i)) {
         judge(i);
-        DEBUG_PRINTF("%zd\n", i);
+        //DEBUG_PRINTF("%zd\n", i);
       }
       else {
-        DEBUG_PRINTF("%lf\n", laneKeys.at(i).pressedDuration().count());
+        //DEBUG_PRINTF("%lf\n", laneKeys.at(i).pressedDuration().count());
       }
 
       beforeKeyStatus.at(i) = true;
@@ -190,7 +191,42 @@ void Game::input() {
 }
 
 void Game::judge(size_t lane) {
+  //NoteData& nextNote = allNotes.at(lane).front();
+  double mostLooseJudge = judges.back().duration;
+  for (auto& note : allNotes.at(lane)) {
+    if (!note.isJudgeEnded) {
+      double diff = getDiff(note.second);
+      if (diff > -mostLooseJudge) {
+        for (size_t i = 0; i < judges.size(); i++) {
+          if (abs(diff) < judges.at(i).duration) {
+            getData().result.incJudge(i, diff);
+            note.isJudgeEnded = true;
+            break;
+          }
+        }
+      } else {
+        break;
+      }
+    }
+  }
+}
 
+double Game::getDiff(double noteSecond) {
+  //早いときは負の値、遅いときは正の値になる
+  //     ---> 早いときはjudgeOffsetを正の値に、遅いときは負の値にする 
+  return rhythmManager.getSecond() - noteSecond + getData().getJudgeOffset();
+}
+
+void Game::excludeEndedNote() {
+  double mostLooseJudge = judges.back().duration;
+  for (auto& laneNotes : allNotes) {
+    for (auto& note : laneNotes) {
+      if (!note.isJudgeEnded && getDiff(note.second) > mostLooseJudge) {
+        getData().result.incMiss();
+        note.isJudgeEnded = true;
+      }
+    }
+  }
 }
 
 Quad Game::getNoteQuad(const NoteData &note) const {

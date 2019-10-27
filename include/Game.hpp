@@ -21,6 +21,8 @@ public:
 private:
   void input();
   void judge(size_t lane);
+  double getDiff(double noteSecond);
+  void excludeEndedNote();
 
   Quad getNoteQuad(const NoteData &note) const;
   int getNoteY(double t) const;
