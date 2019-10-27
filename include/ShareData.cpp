@@ -15,16 +15,18 @@ void ResultData::reset(int totalNotes) {
   judgeCounts.fill(0);
 };
 
-void ResultData::miss() {
+void ResultData::incMiss() {
   if (combo > maxCombo) maxCombo = combo;
   combo = 0;
 
   missCounts++;
+  DEBUG_PRINTF("%s\n", miss.name.narrow().c_str());
 }
 
 void ResultData::incJudge(size_t judgeIndex, double timing) {
   judgeCounts.at(judgeIndex)++;
   judgeTiming.at(judgeIndex).push_back(timing);
+  DEBUG_PRINTF("%s : %lf\n", judges.at(judgeIndex).name.narrow().c_str(), timing);
 }
 
 double ResultData::getTotalPer() {

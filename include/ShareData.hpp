@@ -2,6 +2,7 @@
 #define SHARE_DATA_HPP
 
 #include "MusicInfo.hpp"
+#include "Utility.hpp"
 
 #define MAX_LEVEL_NUM 2
 #define JUDGE_NUM 2
@@ -22,7 +23,7 @@ public:
   ResultData() { reset(1); };
 
   void reset(int totalNotes);
-  void miss();
+  void incMiss();
   void incJudge(size_t judgeIndex, double timing);
   double getTotalPer();
   double getNowPer();
@@ -45,6 +46,7 @@ public:
     levelNum = 0;
     levelFileName = { U"/easy.json",U"/normal.json",U"/hard.json" };
     noteSpeed = 10;
+    judgeOffset = 0.0;
   };
 
   std::vector<MusicInfo> infos;
@@ -81,6 +83,10 @@ public:
     return noteSpeed;
   };
 
+  double getJudgeOffset() {
+    return judgeOffset;
+  }
+
   String getScoreFileName() {
     return infos.at(selected).getFolderPath() + levelFileName.at(levelNum);
   }
@@ -95,6 +101,7 @@ public:
 private:
   size_t selected, levelNum;
   double noteSpeed;
+  double judgeOffset;
 };
 
 
