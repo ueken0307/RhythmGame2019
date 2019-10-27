@@ -10,7 +10,7 @@ constexpr int bottomY = 1080;
 constexpr int upW = 250;
 constexpr int bottomW = 1400;
 constexpr int judgeLineY = 1000;
-constexpr int judgeLineW = convertRange(upY,bottomY,judgeLineY,upW,bottomW);
+constexpr double judgeLineW = convertRange(upY,bottomY,judgeLineY,upW,bottomW);
 constexpr int startNoteH = 1;
 constexpr int endNoteH = 30;
 
@@ -55,7 +55,7 @@ Game::Game(const InitData& init) : IScene(init), font(30), isStart(false) {
   //譜面のオフセット
   double scoreOffset = getData().getSelectedInfo().getOffset();
   //開始小節
-  double startMeasure = 0;
+  int startMeasure = 0;
   //譜面が始まる前のの時間
   double beforeSec = 1.0;
 
@@ -233,27 +233,27 @@ Quad Game::getNoteQuad(const NoteData &note) const {
   int lane = note.lane;
   double second = note.second;
 
-  int centerY = getNoteY(second);
+  int noteCenterY = getNoteY(second);
   int noteHeight = getNoteHeight(second);
-  int upY = centerY - noteHeight / 2.0, bottomY = centerY + noteHeight/2.0;
+  int noteUpY = static_cast<int>(noteCenterY - noteHeight / 2.0), noteBottomY = static_cast<int>(noteCenterY + noteHeight/2.0);
 
   return Quad(
-    { getNoteStartX(upY,lane),upY }, 
-    { getNoteEndX(upY,lane),upY }, 
-    { getNoteEndX(bottomY,lane),bottomY }, 
-    { getNoteStartX(bottomY,lane),bottomY }
+    { getNoteStartX(noteUpY,lane),noteUpY },
+    { getNoteEndX(noteUpY,lane),noteUpY },
+    { getNoteEndX(noteBottomY,lane),noteBottomY },
+    { getNoteStartX(noteBottomY,lane),noteBottomY }
   );
 
 }
 
 int Game::getNoteY(double t) const {
   double arg = (rhythmManager.getSecond() + toJudgeLineNoteSpeed - t) / toBottomNoteSpeed;
-  return convertRange(0,1, noteYFunc(arg),upY,bottomY);
+  return  static_cast<int>(convertRange(0,1, noteYFunc(arg),upY,bottomY));
 }
 
 int Game::getNoteHeight(double t) const {
   double arg = (rhythmManager.getSecond() + toJudgeLineNoteSpeed - t) / toBottomNoteSpeed;
-  return convertRange(0, 1, noteYFunc(arg), startNoteH, endNoteH);
+  return  static_cast<int>(convertRange(0, 1, noteYFunc(arg), startNoteH, endNoteH));
 }
 
 int Game::getNoteStartX(int y, int lane) const {
@@ -262,7 +262,7 @@ int Game::getNoteStartX(int y, int lane) const {
   else if (lane == 5) index = 2;
   else index = lane - 1;
 
-  return convertRange(upY, bottomY, y, vLines.at(index).begin.x, vLines.at(index).end.x);
+  return static_cast<int>(convertRange(upY, bottomY, y, vLines.at(index).begin.x, vLines.at(index).end.x));
 }
 
 int Game::getNoteEndX(int y, int lane) const {
@@ -271,5 +271,5 @@ int Game::getNoteEndX(int y, int lane) const {
   else if (lane == 5) index = 4;
   else index = lane;
 
-  return convertRange(upY, bottomY, y, vLines.at(index).begin.x, vLines.at(index).end.x);
+  return static_cast<int>(convertRange(upY, bottomY, y, vLines.at(index).begin.x, vLines.at(index).end.x));
 }
