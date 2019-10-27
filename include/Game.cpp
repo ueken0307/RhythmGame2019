@@ -142,39 +142,6 @@ void Game::update() {
   }
 }
 
-void Game::draw() const {
-  for (auto& i : vLines) {
-    i.draw();
-  }
-
-  Line({ centerX - judgeLineW / 2.0, judgeLineY },
-    { centerX + judgeLineW / 2.0, judgeLineY }).draw(4,Color(220,30,30));
-
-  drawNotes();
-}
-
-void Game::drawFadeIn(double t) const {
-  draw();
-}
-
-void Game::drawFadeOut(double t) const {
-  draw();
-}
-
-void Game::drawNotes() const{
-  for (const auto& laneNotes : { allNotes.at(0), allNotes.at(5) ,allNotes.at(1) ,allNotes.at(2) ,allNotes.at(3) ,allNotes.at(4) }) {
-    for (const auto& note : laneNotes) {
-      double diff = rhythmManager.getSecond() + toBottomNoteSpeed - note.second;
-      if (!note.isJudgeEnded && diff >= 0) {
-        getNoteQuad(note).draw((note.lane == 0 || note.lane == 5) ? Color(0, 255, 0) : Color(255, 255, 255));
-      }
-      if (diff < 0) {
-        break;
-      }
-    }
-  }
-}
-
 void Game::input() {
   for (size_t i = 0; i < laneKeys.size(); ++i) {
     if (laneKeys.at(i).pressed()) {
@@ -234,10 +201,54 @@ void Game::excludeEndedNote() {
   }
 }
 
-Quad Game::getNoteQuad(const NoteData &note) const {
-  int lane = note.lane;
-  double second = note.second;
 
+void Game::draw() const {
+  for (auto& i : vLines) {
+    i.draw();
+  }
+
+  Line({ centerX - judgeLineW / 2.0, judgeLineY },
+    { centerX + judgeLineW / 2.0, judgeLineY }).draw(4, Color(220, 30, 30));
+
+  drawNotes();
+}
+
+void Game::drawFadeIn(double t) const {
+  draw();
+}
+
+void Game::drawFadeOut(double t) const {
+  draw();
+}
+
+void Game::drawNotes() const {
+  for (const auto& laneNotes : { allNotes.at(0), allNotes.at(5) ,allNotes.at(1) ,allNotes.at(2) ,allNotes.at(3) ,allNotes.at(4) }) {
+    for (const auto& note : laneNotes) {
+      double diff = rhythmManager.getSecond() + toBottomNoteSpeed - note.second;
+      if (!note.isJudgeEnded && diff >= 0) {
+        if (note.length == 0) {
+          drawNormalNote(note);
+        }
+        else {
+          drawLongNote(note);
+        }
+      }
+      if (diff < 0) {
+        break;
+      }
+    }
+  }
+}
+
+void Game::drawNormalNote(const NoteData& note) const {
+  getNoteQuad(note.lane, note.second).draw((note.lane == 0 || note.lane == 5) ? Color(0, 255, 0) : Color(255, 255, 255));
+}
+
+void Game::drawLongNote(const NoteData& note) const {
+  getLongQuad(note);
+}
+
+Quad Game::getNoteQuad(int lane, double second) const {
   int noteCenterY = getNoteY(second);
   int noteHeight = getNoteHeight(second);
   int noteUpY = static_cast<int>(noteCenterY - noteHeight / 2.0), noteBottomY = static_cast<int>(noteCenterY + noteHeight/2.0);
@@ -248,7 +259,10 @@ Quad Game::getNoteQuad(const NoteData &note) const {
     { getNoteEndX(noteBottomY,lane),noteBottomY },
     { getNoteStartX(noteBottomY,lane),noteBottomY }
   );
+}
 
+Quad Game::getLongQuad(const NoteData& note) const {
+  return Quad();
 }
 
 int Game::getNoteY(double t) const {

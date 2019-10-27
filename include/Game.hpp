@@ -19,13 +19,16 @@ public:
   void drawFadeOut(double t) const override;
 
 private:
-  void drawNotes() const;
   void input();
   void judge(size_t lane);
   double getDiff(double noteSecond);
   void excludeEndedNote();
 
-  Quad getNoteQuad(const NoteData &note) const;
+  void drawNotes() const;
+  void drawNormalNote(const NoteData& note) const;
+  void drawLongNote(const NoteData& note) const;
+  Quad getNoteQuad(int lane, double second) const;
+  Quad getLongQuad(const NoteData& note) const;
   int getNoteY(double t) const;
   int getNoteHeight(double t) const;
   int getNoteStartX(int y, int lane) const;
