@@ -220,7 +220,7 @@ void Game::judgeLong(NoteData& note, bool beforeKeyStatus) {
     //途中の判定
 
     //判定区間内にいるとき
-    double fromStartSecond = rhythmManager.getSecond() - note.second;
+    double fromStartSecond = getJudgeDiff(note.second);
     double nowJudgeDurationStart = note.inLongJudgeIndex * longNoteJudgeDuration;
     double nowJudgeDurationEnd = (note.inLongJudgeIndex + 1) * longNoteJudgeDuration;
 
@@ -287,7 +287,7 @@ void Game::excludeEndedNote() {
 
           //現在の判定区間が終わったとき
           double nowJudgeDurationEnd = (note.inLongJudgeIndex + 1) * longNoteJudgeDuration;
-          if ((rhythmManager.getSecond() - note.second) >= nowJudgeDurationEnd) {
+          if (getJudgeDiff(note.second) >= nowJudgeDurationEnd) {
             getData().result.incMiss();
             if (note.inLongJudgeIndex + 1 < floor((note.endSecond - note.second) / longNoteJudgeDuration)) {
               //インデックスが増やせないときは判定終わりにする
