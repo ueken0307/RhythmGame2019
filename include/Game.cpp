@@ -231,8 +231,7 @@ void Game::drawFadeOut(double t) const {
 void Game::drawNotes() const {
   for (const auto& laneNotes : { allNotes.at(0), allNotes.at(5) ,allNotes.at(1) ,allNotes.at(2) ,allNotes.at(3) ,allNotes.at(4) }) {
     for (const auto& note : laneNotes) {
-      double diff = rhythmManager.getSecond() + toBottomNoteSpeed - note.second;
-      if (note.isVisible && diff >= 0) {
+      if (note.isVisible) {
         if (getNoteDrawStatus(note.second) != NoteDrawStatus::before) {
           if (note.length == 0) {
             drawNormalNote(note);
