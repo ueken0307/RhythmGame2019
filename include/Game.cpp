@@ -13,6 +13,7 @@ constexpr int judgeLineY = 1000;
 constexpr double judgeLineW = convertRange(upY,bottomY,judgeLineY,upW,bottomW);
 constexpr int startNoteH = 1;
 constexpr int endNoteH = 30;
+constexpr double longNoteJudgeDuration = 0.5;
 
 // (0 < input < 1)  (0 < output < 1)
 double noteYFunc(double input) {
@@ -76,7 +77,14 @@ Game::Game(const InitData& init) : IScene(init), font(30), isStart(false), isMus
     );
 
     totalNotes++;
-    if (i[U"length"].get<int32>() != 0) totalNotes++;
+  }
+
+  //長押しのtotalNotes処理
+  for (const auto& laneNotes : allNotes) {
+    for (const auto& notes : laneNotes) {
+      //終点 + 途中
+      totalNotes += 1 + floor((notes.endSecond - notes.second) / longNoteJudgeDuration);
+    }
   }
 
   getData().result.reset(totalNotes);
@@ -95,7 +103,7 @@ Game::Game(const InitData& init) : IScene(init), font(30), isStart(false), isMus
   }
 
   laneKeys = {KeyS, KeyD, KeyF, KeyJ, KeyK, KeyL};
-  beforeKeyStatus.fill(false);
+  beforeKeyStatuses.fill(false);
   
   toJudgeLineNoteSpeed = getData().getNoteSpeed();
   toBottomNoteSpeed = toJudgeLineNoteSpeed /calcJudgeLineValue(0, 1);
@@ -145,43 +153,89 @@ void Game::update() {
 void Game::input() {
   for (size_t i = 0; i < laneKeys.size(); ++i) {
     if (laneKeys.at(i).pressed()) {
-      if (!beforeKeyStatus.at(i)) {
-        judge(i);
-        //DEBUG_PRINTF("%zd\n", i);
-      }
-      else {
-        //DEBUG_PRINTF("%lf\n", laneKeys.at(i).pressedDuration().count());
-      }
-
-      beforeKeyStatus.at(i) = true;
+      judge(i, beforeKeyStatuses.at(i));
+      beforeKeyStatuses.at(i) = true;
     }
     else {
-      beforeKeyStatus.at(i) = false;
+      beforeKeyStatuses.at(i) = false;
     }
   }
 
 }
 
-void Game::judge(size_t lane) {
-  //NoteData& nextNote = allNotes.at(lane).front();
+void Game::judge(size_t lane, bool beforeKeyStatus) {
   double mostLooseJudge = judges.back().duration;
+
   for (auto& note : allNotes.at(lane)) {
     if (!note.isJudgeEnded) {
       double diff = getJudgeDiff(note.second);
       if (diff > -mostLooseJudge) {
-        for (size_t i = 0; i < judges.size(); i++) {
-          if (abs(diff) < judges.at(i).duration) {
-            getData().result.incJudge(i, diff);
-            note.isJudgeEnded = true;
-            note.isVisible = false;
-            break;
-          }
+        if (note.length == 0 && !beforeKeyStatus) {
+          judgeNormal(note);
         }
-      } else {
+        else {
+          judgeLong(note,beforeKeyStatus);
+        }
+      }
+      else {
+        //diff < -mostLooseJudge
+        //(まだ判定の範囲内に入ってない)
         break;
       }
     }
   }
+}
+
+void Game::judgeNormal(NoteData& note) {
+  double diff = getJudgeDiff(note.second);
+  for (size_t i = 0; i < judges.size(); i++) {
+    if (abs(diff) < judges.at(i).duration) {
+      getData().result.incJudge(i, diff);
+      note.isJudgeEnded = true;
+      note.isVisible = false;
+      break;
+    }
+  }
+}
+
+
+void Game::judgeLong(NoteData& note, bool beforeKeyStatus) {
+  if (!note.inLong) {
+    //始点
+    double diff = getJudgeDiff(note.second);
+    for (size_t i = 0; i < judges.size(); i++) {
+      if (!beforeKeyStatus && abs(diff) < judges.at(i).duration) {
+        getData().result.incJudge(i, diff);
+        note.inLong = true;
+        break;
+      }
+    }
+  } else {
+    //ロングノーツ中
+
+    //まだ区切り期間が存在するとき
+    if (!note.firstKeyStatus && note.inLongJudgeIndex < floor((note.endSecond - note.second) / longNoteJudgeDuration)) {
+      //現在の判定区間のスタート以降の時間にいるとき
+      double locationInsideLong = rhythmManager.getSecond() - note.second - (note.inLongJudgeIndex * longNoteJudgeDuration);
+      if (locationInsideLong > 0) {
+        getData().result.incJudge(0, 0.0);
+        note.inLongJudgeIndex++;
+
+      }
+    }
+    else {
+      //終点
+      if (!note.firstKeyStatus) {
+        getData().result.incJudge(0, 0.0);
+        note.isJudgeEnded = true;
+      }
+    }
+    
+    
+  }
+
+  
+
 }
 
 double Game::getJudgeDiff(double noteSecond) {
@@ -194,16 +248,56 @@ void Game::excludeEndedNote() {
   double mostLooseJudge = judges.back().duration;
   for (auto& laneNotes : allNotes) {
     for (auto& note : laneNotes) {
-      //判定が終わってなく、一番ゆるい判定内から外れていたらミスにする
-      if (!note.isJudgeEnded && getJudgeDiff(note.second) > mostLooseJudge) {
-        getData().result.incMiss();
-        note.isJudgeEnded = true;
-      }
+      if (note.length == 0) {
+        //判定が終わってなく、一番ゆるい判定内から外れていたらミスにする
+        if (!note.isJudgeEnded && getJudgeDiff(note.second) > mostLooseJudge) {
+          getData().result.incMiss();
+          note.isJudgeEnded = true;
+        }
 
-      //ノートが描画範囲外に行ったら描画しないようにする
-      if (getNoteDrawStatus(note.second) == NoteDrawStatus::afterBottom) {
-        note.isVisible = false;
+        //ノートが描画範囲外に行ったら描画しないようにする
+        if (getNoteDrawStatus(note.second) == NoteDrawStatus::afterBottom) {
+          note.isVisible = false;
+        }
       }
+      else {
+        //始点の判定が、一番ゆるい判定内から外れていたらミスにする
+        //(始点のミス判定)
+        if (!note.inLong && getJudgeDiff(note.second) > mostLooseJudge) {
+          getData().result.incMiss();
+          note.firstKeyStatus = beforeKeyStatuses.at(note.lane);
+          note.inLong = true;
+        }
+
+        if (note.inLong && note.firstKeyStatus) {
+          note.firstKeyStatus = beforeKeyStatuses.at(note.lane);
+        }
+
+
+        //まだ区切り期間が存在するとき
+        if (note.inLongJudgeIndex < floor((note.endSecond - note.second) / longNoteJudgeDuration)) {
+          //現在の判定区間のスタート以降の時間にいるとき
+          double locationInsideLong = rhythmManager.getSecond() - note.second - (note.inLongJudgeIndex * longNoteJudgeDuration);
+          if (locationInsideLong > 0 && locationInsideLong >= (note.inLongJudgeIndex + 1) * longNoteJudgeDuration) {
+            getData().result.incMiss();
+            note.inLongJudgeIndex++;
+          }
+        }
+        
+
+        //終点までの判定が終わってなくて、一番ゆるい判定内から外れていたらミスにする
+        //(終点のミス判定)
+        if (!note.isJudgeEnded && getJudgeDiff(note.endSecond) > mostLooseJudge) {
+          getData().result.incMiss();
+          note.isJudgeEnded = true;
+        }
+
+        //ノートが描画範囲外に行ったら描画しないようにする
+        if (getNoteDrawStatus(note.endSecond) == NoteDrawStatus::afterBottom) {
+          note.isVisible = false;
+        }
+      }
+      
     }
   }
 }
@@ -252,7 +346,7 @@ void Game::drawNormalNote(const NoteData& note) const {
 }
 
 void Game::drawLongNote(const NoteData& note) const {
-  getLongQuad(note);
+  getLongQuad(note).draw(Color(0,0,255));
 }
 
 Quad Game::getNoteQuad(int lane, double second) const {
@@ -269,7 +363,28 @@ Quad Game::getNoteQuad(int lane, double second) const {
 }
 
 Quad Game::getLongQuad(const NoteData& note) const {
-  return Quad();
+  int longNoteUpY = 0;
+  if (getNoteDrawStatus(note.endSecond) == NoteDrawStatus::before) {
+    longNoteUpY = upY;
+  } else {
+    longNoteUpY = getNoteY(note.endSecond);
+  }
+
+  int longNoteBottomY = 0;
+  if (false) {
+    //判定中
+  } else {
+    if (getNoteDrawStatus(note.second) == NoteDrawStatus::afterBottom) {
+      longNoteBottomY = bottomY;
+    } else {
+      longNoteBottomY = getNoteY(note.second);
+    }
+  }
+  return Quad(
+    { getNoteStartX(longNoteUpY,note.lane),longNoteUpY },
+    { getNoteEndX(longNoteUpY,note.lane),longNoteUpY },
+    { getNoteEndX(longNoteBottomY,note.lane),longNoteBottomY },
+    { getNoteStartX(longNoteBottomY,note.lane),longNoteBottomY });
 }
 
 int Game::getNoteY(double t) const {

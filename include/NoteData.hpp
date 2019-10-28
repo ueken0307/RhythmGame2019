@@ -10,8 +10,10 @@ public:
   int lane;
   int length;
   bool isJudgeEnded;
-  bool isLong;
+  bool firstKeyStatus;
+  bool inLong;
   bool isLongJudgeEnded;
+  int inLongJudgeIndex;
   bool isVisible;
 };
 

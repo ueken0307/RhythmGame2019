@@ -27,7 +27,9 @@ public:
 
 private:
   void input();
-  void judge(size_t lane);
+  void judge(size_t lane, bool beforeKeyStatus);
+  void judgeNormal(NoteData &note);
+  void judgeLong(NoteData& note, bool beforeKeyStatus);
   double getJudgeDiff(double noteSecond);
   void excludeEndedNote();
 
@@ -53,7 +55,7 @@ private:
   std::array<std::list<NoteData>, 6> allNotes;
 
   std::array<Key, 6> laneKeys;
-  std::array<bool, 6> beforeKeyStatus;
+  std::array<bool, 6> beforeKeyStatuses;
 };
 
 #endif // GAME_HPP
