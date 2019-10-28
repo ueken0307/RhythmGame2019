@@ -173,6 +173,7 @@ void Game::judge(size_t lane) {
           if (abs(diff) < judges.at(i).duration) {
             getData().result.incJudge(i, diff);
             note.isJudgeEnded = true;
+            note.isVisible = false;
             break;
           }
         }
@@ -193,9 +194,15 @@ void Game::excludeEndedNote() {
   double mostLooseJudge = judges.back().duration;
   for (auto& laneNotes : allNotes) {
     for (auto& note : laneNotes) {
+      //判定が終わってなく、一番ゆるい判定内から外れていたらミスにする
       if (!note.isJudgeEnded && getJudgeDiff(note.second) > mostLooseJudge) {
         getData().result.incMiss();
         note.isJudgeEnded = true;
+      }
+
+      //ノートが描画範囲外に行ったら描画しないようにする
+      if (getNoteDrawStatus(note.second) == NoteDrawStatus::afterBottom) {
+        note.isVisible = false;
       }
     }
   }
@@ -225,16 +232,17 @@ void Game::drawNotes() const {
   for (const auto& laneNotes : { allNotes.at(0), allNotes.at(5) ,allNotes.at(1) ,allNotes.at(2) ,allNotes.at(3) ,allNotes.at(4) }) {
     for (const auto& note : laneNotes) {
       double diff = rhythmManager.getSecond() + toBottomNoteSpeed - note.second;
-      if (!note.isJudgeEnded && diff >= 0) {
-        if (note.length == 0) {
-          drawNormalNote(note);
+      if (note.isVisible && diff >= 0) {
+        if (getNoteDrawStatus(note.second) != NoteDrawStatus::before) {
+          if (note.length == 0) {
+            drawNormalNote(note);
+          } else {
+            drawLongNote(note);
+          }
+        } else {
+          //描画範囲外(before)になったらbreak
+          break;
         }
-        else {
-          drawLongNote(note);
-        }
-      }
-      if (diff < 0) {
-        break;
       }
     }
   }
@@ -291,4 +299,18 @@ int Game::getNoteEndX(int y, int lane) const {
   else index = lane;
 
   return static_cast<int>(convertRange(upY, bottomY, y, vLines.at(index).begin.x, vLines.at(index).end.x));
+}
+
+NoteDrawStatus Game::getNoteDrawStatus(double t) const {
+  double diff = rhythmManager.getSecond() + toJudgeLineNoteSpeed - t;
+ 
+  if (diff < 0) {
+    return NoteDrawStatus::before;
+  } else if ( diff > toBottomNoteSpeed) {
+    return NoteDrawStatus::afterBottom;
+  } else if (diff > toJudgeLineNoteSpeed) {
+    return NoteDrawStatus::afterJudgeLine;
+  }
+
+  return NoteDrawStatus::within;
 }

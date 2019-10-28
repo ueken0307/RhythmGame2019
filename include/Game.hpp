@@ -9,6 +9,13 @@
 #include "RhythmManager.hpp"
 #include "NoteData.hpp"
 
+enum class NoteDrawStatus {
+  before,
+  within,
+  afterJudgeLine,
+  afterBottom
+};
+
 class Game :public SceneManager<State, ShareData>::Scene {
 public:
   Game(const InitData& init);
@@ -33,6 +40,7 @@ private:
   int getNoteHeight(double t) const;
   int getNoteStartX(int y, int lane) const;
   int getNoteEndX(int y, int lane) const;
+  NoteDrawStatus getNoteDrawStatus(double t)const;
 
 
   Font font;
