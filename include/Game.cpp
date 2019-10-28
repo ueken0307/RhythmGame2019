@@ -210,32 +210,31 @@ void Game::judgeLong(NoteData& note, bool beforeKeyStatus) {
         break;
       }
     }
+  } else if (note.isLongJudgeEnded) {
+    //終点の判定
+    if (!note.firstKeyStatus) {
+      getData().result.incJudge(0, 0.0);
+      note.isJudgeEnded = true;
+    }
   } else {
-    //ロングノーツ中
+    //途中の判定
 
-    //まだ区切り期間が存在するとき
-    if (!note.firstKeyStatus && note.inLongJudgeIndex < floor((note.endSecond - note.second) / longNoteJudgeDuration)) {
-      //現在の判定区間のスタート以降の時間にいるとき
-      double locationInsideLong = rhythmManager.getSecond() - note.second - (note.inLongJudgeIndex * longNoteJudgeDuration);
-      if (locationInsideLong > 0) {
-        getData().result.incJudge(0, 0.0);
+    //判定区間内にいるとき
+    double fromStartSecond = rhythmManager.getSecond() - note.second;
+    double nowJudgeDurationStart = note.inLongJudgeIndex * longNoteJudgeDuration;
+    double nowJudgeDurationEnd = (note.inLongJudgeIndex + 1) * longNoteJudgeDuration;
+
+    if (!note.firstKeyStatus && (nowJudgeDurationStart <= fromStartSecond && fromStartSecond < nowJudgeDurationEnd)) {
+      getData().result.incJudge(0, 0.0);
+      if (note.inLongJudgeIndex + 1 < floor((note.endSecond - note.second) / longNoteJudgeDuration)) {
+        //インデックスが増やせないときは判定終わりにする
         note.inLongJudgeIndex++;
-
+      }
+      else {
+        note.isLongJudgeEnded = true;
       }
     }
-    else {
-      //終点
-      if (!note.firstKeyStatus) {
-        getData().result.incJudge(0, 0.0);
-        note.isJudgeEnded = true;
-      }
-    }
-    
-    
   }
-
-  
-
 }
 
 double Game::getJudgeDiff(double noteSecond) {
@@ -261,35 +260,42 @@ void Game::excludeEndedNote() {
         }
       }
       else {
-        //始点の判定が、一番ゆるい判定内から外れていたらミスにする
-        //(始点のミス判定)
-        if (!note.inLong && getJudgeDiff(note.second) > mostLooseJudge) {
-          getData().result.incMiss();
-          note.firstKeyStatus = beforeKeyStatuses.at(note.lane);
-          note.inLong = true;
-        }
-
-        if (note.inLong && note.firstKeyStatus) {
-          note.firstKeyStatus = beforeKeyStatuses.at(note.lane);
-        }
-
-
-        //まだ区切り期間が存在するとき
-        if (note.inLongJudgeIndex < floor((note.endSecond - note.second) / longNoteJudgeDuration)) {
-          //現在の判定区間のスタート以降の時間にいるとき
-          double locationInsideLong = rhythmManager.getSecond() - note.second - (note.inLongJudgeIndex * longNoteJudgeDuration);
-          if (locationInsideLong > 0 && locationInsideLong >= (note.inLongJudgeIndex + 1) * longNoteJudgeDuration) {
+        if (!note.inLong) {
+          //始点のミス判定
+          //始点の判定が、一番ゆるい判定内から外れていたらミスにする
+          if (getJudgeDiff(note.second) > mostLooseJudge) {
             getData().result.incMiss();
-            note.inLongJudgeIndex++;
+            note.firstKeyStatus = true;
+            note.inLong = true;
           }
-        }
-        
 
-        //終点までの判定が終わってなくて、一番ゆるい判定内から外れていたらミスにする
-        //(終点のミス判定)
-        if (!note.isJudgeEnded && getJudgeDiff(note.endSecond) > mostLooseJudge) {
-          getData().result.incMiss();
-          note.isJudgeEnded = true;
+        } else if (note.isLongJudgeEnded) {
+          //終点のミス判定
+          //終点までの判定が終わってなくて、一番ゆるい判定内から外れていたらミスにする
+          if (!note.isJudgeEnded && getJudgeDiff(note.endSecond) > mostLooseJudge) {
+            getData().result.incMiss();
+            note.isJudgeEnded = true;
+          }
+
+        } else {
+          //途中のミス判定
+
+          //最初に押しっぱで入ったときは
+          if (note.firstKeyStatus && !beforeKeyStatuses.at(note.lane)) {
+            note.firstKeyStatus = false;
+          }
+
+          //現在の判定区間が終わったとき
+          double nowJudgeDurationEnd = (note.inLongJudgeIndex + 1) * longNoteJudgeDuration;
+          if ((rhythmManager.getSecond() - note.second) >= nowJudgeDurationEnd) {
+            getData().result.incMiss();
+            if (note.inLongJudgeIndex + 1 < floor((note.endSecond - note.second) / longNoteJudgeDuration)) {
+              //インデックスが増やせないときは判定終わりにする
+              note.inLongJudgeIndex++;
+            }else{
+              note.isLongJudgeEnded = true;
+            }
+          }
         }
 
         //ノートが描画範囲外に行ったら描画しないようにする
