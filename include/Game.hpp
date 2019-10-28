@@ -21,7 +21,7 @@ public:
 private:
   void input();
   void judge(size_t lane);
-  double getDiff(double noteSecond);
+  double getJudgeDiff(double noteSecond);
   void excludeEndedNote();
 
   void drawNotes() const;

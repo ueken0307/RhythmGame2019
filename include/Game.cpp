@@ -167,7 +167,7 @@ void Game::judge(size_t lane) {
   double mostLooseJudge = judges.back().duration;
   for (auto& note : allNotes.at(lane)) {
     if (!note.isJudgeEnded) {
-      double diff = getDiff(note.second);
+      double diff = getJudgeDiff(note.second);
       if (diff > -mostLooseJudge) {
         for (size_t i = 0; i < judges.size(); i++) {
           if (abs(diff) < judges.at(i).duration) {
@@ -183,7 +183,7 @@ void Game::judge(size_t lane) {
   }
 }
 
-double Game::getDiff(double noteSecond) {
+double Game::getJudgeDiff(double noteSecond) {
   //早いときは負の値、遅いときは正の値になる
   //     ---> 早いときはjudgeOffsetを正の値に、遅いときは負の値にする 
   return rhythmManager.getSecond() - noteSecond + getData().getJudgeOffset();
@@ -193,7 +193,7 @@ void Game::excludeEndedNote() {
   double mostLooseJudge = judges.back().duration;
   for (auto& laneNotes : allNotes) {
     for (auto& note : laneNotes) {
-      if (!note.isJudgeEnded && getDiff(note.second) > mostLooseJudge) {
+      if (!note.isJudgeEnded && getJudgeDiff(note.second) > mostLooseJudge) {
         getData().result.incMiss();
         note.isJudgeEnded = true;
       }
