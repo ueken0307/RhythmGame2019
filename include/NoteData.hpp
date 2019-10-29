@@ -14,6 +14,7 @@ public:
   bool inLong;
   bool isLongJudgeEnded;
   int inLongJudgeIndex;
+  bool beforeJudgeResult;
   bool isVisible;
 };
 

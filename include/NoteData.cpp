@@ -7,5 +7,6 @@ NoteData::NoteData(int count, double second, double endSecond, int lane, int len
   inLong = false;
   isLongJudgeEnded = false;
   inLongJudgeIndex = 0;
+  beforeJudgeResult = false;
   isVisible = true;
 }

@@ -13,7 +13,7 @@ constexpr int judgeLineY = 1000;
 constexpr double judgeLineW = convertRange(upY,bottomY,judgeLineY,upW,bottomW);
 constexpr int startNoteH = 1;
 constexpr int endNoteH = 30;
-constexpr double longNoteJudgeDuration = 0.5;
+constexpr double longNoteJudgeDuration = 0.25;
 
 // (0 < input < 1)  (0 < output < 1)
 double noteYFunc(double input) {
@@ -207,6 +207,7 @@ void Game::judgeLong(NoteData& note, bool beforeKeyStatus) {
       if (!beforeKeyStatus && abs(diff) < judges.at(i).duration) {
         getData().result.incJudge(i, diff);
         note.inLong = true;
+        note.beforeJudgeResult = true;
         break;
       }
     }
@@ -214,6 +215,7 @@ void Game::judgeLong(NoteData& note, bool beforeKeyStatus) {
     //終点の判定
     if (!note.firstKeyStatus) {
       getData().result.incJudge(0, 0.0);
+      note.beforeJudgeResult = true;
       note.isJudgeEnded = true;
     }
   } else {
@@ -226,6 +228,7 @@ void Game::judgeLong(NoteData& note, bool beforeKeyStatus) {
 
     if (!note.firstKeyStatus && (nowJudgeDurationStart <= fromStartSecond && fromStartSecond < nowJudgeDurationEnd)) {
       getData().result.incJudge(0, 0.0);
+      note.beforeJudgeResult = true;
       if (note.inLongJudgeIndex + 1 < floor((note.endSecond - note.second) / longNoteJudgeDuration)) {
         //インデックスが増やせないときは判定終わりにする
         note.inLongJudgeIndex++;
@@ -267,6 +270,7 @@ void Game::excludeEndedNote() {
             getData().result.incMiss();
             note.firstKeyStatus = true;
             note.inLong = true;
+            note.beforeJudgeResult = false;
           }
 
         } else if (note.isLongJudgeEnded) {
@@ -275,6 +279,7 @@ void Game::excludeEndedNote() {
           if (!note.isJudgeEnded && getJudgeDiff(note.endSecond) > mostLooseJudge) {
             getData().result.incMiss();
             note.isJudgeEnded = true;
+            note.beforeJudgeResult = false;
           }
 
         } else {
@@ -289,6 +294,7 @@ void Game::excludeEndedNote() {
           double nowJudgeDurationEnd = (note.inLongJudgeIndex + 1) * longNoteJudgeDuration;
           if (getJudgeDiff(note.second) >= nowJudgeDurationEnd) {
             getData().result.incMiss();
+            note.beforeJudgeResult = false;
             if (note.inLongJudgeIndex + 1 < floor((note.endSecond - note.second) / longNoteJudgeDuration)) {
               //インデックスが増やせないときは判定終わりにする
               note.inLongJudgeIndex++;
@@ -352,7 +358,7 @@ void Game::drawNormalNote(const NoteData& note) const {
 }
 
 void Game::drawLongNote(const NoteData& note) const {
-  getLongQuad(note).draw(Color(0,0,255));
+  getLongQuad(note).draw((note.beforeJudgeResult)? Color(40,40,220) : Color(10,10,120));
 }
 
 Quad Game::getNoteQuad(int lane, double second) const {
@@ -377,8 +383,8 @@ Quad Game::getLongQuad(const NoteData& note) const {
   }
 
   int longNoteBottomY = 0;
-  if (false) {
-    //判定中
+  if (note.beforeJudgeResult) {
+    longNoteBottomY = judgeLineY;
   } else {
     if (getNoteDrawStatus(note.second) == NoteDrawStatus::afterBottom) {
       longNoteBottomY = bottomY;
@@ -386,6 +392,12 @@ Quad Game::getLongQuad(const NoteData& note) const {
       longNoteBottomY = getNoteY(note.second);
     }
   }
+
+  //判定終わったロングノーツが下まで行く問題の解決
+  if (longNoteBottomY < longNoteUpY) {
+    longNoteUpY = longNoteBottomY;
+  }
+
   return Quad(
     { getNoteStartX(longNoteUpY,note.lane),longNoteUpY },
     { getNoteEndX(longNoteUpY,note.lane),longNoteUpY },
