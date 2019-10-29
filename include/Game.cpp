@@ -81,9 +81,11 @@ Game::Game(const InitData& init) : IScene(init), font(30), isStart(false), isMus
 
   //長押しのtotalNotes処理
   for (const auto& laneNotes : allNotes) {
-    for (const auto& notes : laneNotes) {
-      //終点 + 途中
-      totalNotes += 1 + floor((notes.endSecond - notes.second) / longNoteJudgeDuration);
+    for (const auto& note : laneNotes) {
+      if (note.length != 0) {
+        //終点 + 途中
+        totalNotes += 1 + floor((note.endSecond - note.second) / longNoteJudgeDuration);
+      }
     }
   }
 

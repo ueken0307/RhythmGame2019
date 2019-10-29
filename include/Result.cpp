@@ -23,7 +23,7 @@ void Result::draw() const {
       if (timing < 0) {
         fast++;
       }
-      else {
+      else if (timing > 0) {
         late++;
       }
       ave += timing;
