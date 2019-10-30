@@ -3,6 +3,7 @@
 
 #include "MusicInfo.hpp"
 #include "Utility.hpp"
+#include "DrawUtility.hpp"
 
 #define MAX_LEVEL_NUM 2
 #define JUDGE_NUM 2
@@ -101,6 +102,7 @@ public:
 
   std::array<String, 3> levelFileName;
   ResultData result;
+  DrawBackground drawBackground;
 
 private:
   size_t selected, levelNum;
