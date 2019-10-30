@@ -15,6 +15,8 @@ constexpr int startNoteH = 1;
 constexpr int endNoteH = 30;
 constexpr double longNoteJudgeDuration = 0.25;
 
+constexpr int laneEffectLength = 500;
+
 // (0 < input < 1)  (0 < output < 1)
 double noteYFunc(double input) {
   double start = 1.7 * M_PI;
@@ -98,6 +100,8 @@ Game::Game(const InitData& init) : IScene(init), font(30), isStart(false), isMus
 
   //タップ音のロード
   AudioAsset::Preload(U"tap");
+
+  laneEffect = Texture(Resource(U"laneEffect.png"));
 
   for (size_t i = 0; i < vLines.size(); ++i) {
     vLines.at(i) = Line({centerX - (upW/2)  + ((double)upW / (vLines.size() - 1)) * i, upY},
@@ -325,6 +329,7 @@ void Game::draw() const {
   Line({ centerX - judgeLineW / 2.0, judgeLineY },
     { centerX + judgeLineW / 2.0, judgeLineY }).draw(4, Color(220, 30, 30));
 
+  drawLaneEffect();
   drawNotes();
 }
 
@@ -334,6 +339,18 @@ void Game::drawFadeIn(double t) const {
 
 void Game::drawFadeOut(double t) const {
   draw();
+}
+
+void Game::drawLaneEffect() const {
+  for (size_t i = 0; i < laneKeys.size(); ++i) {
+    if (laneKeys.at(i).pressed()) {
+      Quad(
+        { getNoteStartX(judgeLineY - laneEffectLength, i),judgeLineY - laneEffectLength },
+        { getNoteEndX(judgeLineY - laneEffectLength, i),judgeLineY - laneEffectLength },
+        { getNoteEndX(judgeLineY,i),judgeLineY },
+        { getNoteStartX(judgeLineY,i),judgeLineY })(laneEffect).draw(Color(255,64));
+    }
+  }
 }
 
 void Game::drawNotes() const {

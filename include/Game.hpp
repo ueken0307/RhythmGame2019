@@ -33,6 +33,7 @@ private:
   double getJudgeDiff(double noteSecond);
   void excludeEndedNote();
 
+  void drawLaneEffect() const;
   void drawNotes() const;
   void drawNormalNote(const NoteData& note) const;
   void drawLongNote(const NoteData& note) const;
@@ -46,6 +47,7 @@ private:
 
 
   Font font;
+  Texture laneEffect;
   bool isStart, isMusicStarted;
   std::array<Line,5> vLines; //vertical lines
   double toJudgeLineNoteSpeed;
