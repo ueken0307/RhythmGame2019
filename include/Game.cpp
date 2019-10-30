@@ -17,6 +17,13 @@ constexpr double longNoteJudgeDuration = 0.25;
 
 constexpr int laneEffectLength = 500;
 
+constexpr Color LNSEActiveColor = Color(40, 100, 200); //ロングノーツの始点と終点の判定成功時のカラー
+constexpr Color LNSEMissColor = Color(20, 50, 100); //ロングノーツの始点と終点の判定失敗時時のカラー
+constexpr Color LNHalfwayActiveColor = Color(80, 200, 200); //ロングノーツの途中の判定成功時のカラー
+constexpr Color LNHalfwayMissColor = Color(40, 100, 100); //ロングノーツの途中の判定失敗時時のカラー
+
+
+
 // (0 < input < 1)  (0 < output < 1)
 double noteYFunc(double input) {
   double start = 1.7 * M_PI;
@@ -377,7 +384,28 @@ void Game::drawNormalNote(const NoteData& note) const {
 }
 
 void Game::drawLongNote(const NoteData& note) const {
-  getLongQuad(note).draw((note.beforeJudgeResult)? Color(40,40,220) : Color(10,10,120));
+  getLongQuad(note).draw((note.beforeJudgeResult)? LNHalfwayActiveColor : LNHalfwayMissColor);
+
+  //長押し始点
+  if (getNoteDrawStatus(note.endSecond) != NoteDrawStatus::afterJudgeLine) {
+    if (getNoteDrawStatus(note.second) == NoteDrawStatus::within) {
+      getNoteQuad(note.lane, note.second).draw((note.beforeJudgeResult) ? LNSEActiveColor : LNSEMissColor);
+    }
+    else if (getNoteDrawStatus(note.second) == NoteDrawStatus::afterJudgeLine || getNoteDrawStatus(note.second) == NoteDrawStatus::afterBottom) {
+      if (note.beforeJudgeResult) {
+        getNoteQuad(note.lane, rhythmManager.getSecond()).draw((note.beforeJudgeResult) ? LNSEActiveColor : LNSEMissColor);
+      }
+      else {
+        getNoteQuad(note.lane, note.second).draw((note.beforeJudgeResult) ? LNSEActiveColor : LNSEMissColor);
+      }
+    }
+  }
+
+  //長押し終点
+  if (getNoteDrawStatus(note.endSecond) == NoteDrawStatus::within || 
+    (!note.beforeJudgeResult && getNoteDrawStatus(note.endSecond) == NoteDrawStatus::afterJudgeLine)) {
+    getNoteQuad(note.lane, note.endSecond).draw((note.beforeJudgeResult) ? LNSEActiveColor : LNSEMissColor);
+  }
 }
 
 Quad Game::getNoteQuad(int lane, double second) const {
