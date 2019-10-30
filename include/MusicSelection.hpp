@@ -7,6 +7,12 @@
 #include "State.hpp"
 #include "Utility.hpp"
 
+enum class MoveStatus {
+  NotMove,
+  Inc,
+  Dec
+};
+
 class MusicSelection :public SceneManager<State, ShareData>::Scene {
 public:
   MusicSelection(const InitData& init);
@@ -17,9 +23,14 @@ public:
   void drawFadeOut(double t) const override;
 
 private:
-  Font font;
+  void drawElem(int startX, int startY, MusicInfo& info) const;
 
-  bool downPlusKey, downMinusKey;
+  Font font30, font60;
+  Stopwatch stopwatch;
+
+  MoveStatus moveStatus;
+  double moveSec;
+  bool direction; // down -> false, up -> true
 };
 
 #endif // MUSIC_SELECTION_HPP

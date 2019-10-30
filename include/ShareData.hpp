@@ -100,6 +100,18 @@ public:
     return infos.at(selected);
   }
 
+  MusicInfo& getInfoFromSelected(int offset) {
+    int index = selected + offset;
+
+    if (index < 0) {
+      index += infos.size();
+    } else if (index >= infos.size()) {
+      index %= infos.size();
+    }
+
+    return infos.at(index);
+  }
+
   std::array<String, 3> levelFileName;
   ResultData result;
   DrawBackground drawBackground;
