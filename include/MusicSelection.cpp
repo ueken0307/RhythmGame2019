@@ -102,8 +102,8 @@ void MusicSelection::draw() const {
 
   // *** Level ***
   for (int i = 0; i < info.getPlayLevels().size(); ++i) {
-    Quad({ levelStartX + i * (levelGap + levelW)         , levelStartY + levelW / 2.0 }, { levelStartX + i * (levelGap + levelW) + levelW / 2, levelStartY },
-         { levelStartX + i * (levelGap + levelW) + levelW, levelStartY + levelW / 2.0 }, { levelStartX + i * (levelGap + levelW) + levelW / 2, levelStartY + levelW })
+    Quad({ levelStartX + i * (levelGap + levelW)         , levelStartY + levelW / 2 }, { levelStartX + i * (levelGap + levelW) + levelW / 2, levelStartY },
+         { levelStartX + i * (levelGap + levelW) + levelW, levelStartY + levelW / 2 }, { levelStartX + i * (levelGap + levelW) + levelW / 2, levelStartY + levelW })
       .draw(levelBackgroundColor);
 
     font60(info.getPlayLevels().at(i)).drawAt({ levelStartX + i * (levelGap + levelW) + levelW / 2 , levelStartY + levelW / 2.0 }, levelFontColor);
