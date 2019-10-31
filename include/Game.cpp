@@ -26,9 +26,10 @@ constexpr Line judgeLine({ centerX - judgeLineW / 2.0, judgeLineY },{ centerX + 
 constexpr Color judgeLineColor(220, 30, 30);
 
 //*** Note ***
-//normal
-constexpr int startNoteH = 1;
-constexpr int endNoteH = 30;
+constexpr int startNoteH = 5;
+constexpr int endNoteH = 40;
+constexpr double noteFrameThickness = 2.0;
+constexpr Color noteFrameColor(40, 40, 40);
 
 //long
 constexpr double longNoteJudgeDuration = 0.25;
@@ -455,7 +456,7 @@ void Game::drawNotes() const {
 
 void Game::drawNormalNote(const NoteData& note) const {
   Quad noteQuad = getNoteQuad(note.lane, note.second);
-  noteQuad.draw((note.lane == 0 || note.lane == 5) ? Color(0, 255, 0) : Color(255, 255, 255));
+  noteQuad.draw((note.lane == 0 || note.lane == 5) ? Color(0, 255, 0) : Color(255, 255, 255)).drawFrame(noteFrameThickness, noteFrameColor);
 
   if (note.lane == 0) {
     Triangle({ getNoteStartX(noteQuad.p0.y - getNoteHeight(note.second) * 8.0 ,0), noteQuad.p0.y - getNoteHeight(note.second) * 8.0 }, noteQuad.p3, { noteQuad.p3.x - getNoteHeight(note.second) * 8.0,noteQuad.p3.y }).draw(Color(0, 255, 0));
@@ -465,29 +466,35 @@ void Game::drawNormalNote(const NoteData& note) const {
 }
 
 void Game::drawLongNote(const NoteData& note) const {
-  getLongQuad(note).draw((note.beforeJudgeResult)? LNHalfwayActiveColor : LNHalfwayMissColor);
+  getLongQuad(note).draw((note.beforeJudgeResult)? LNHalfwayActiveColor : LNHalfwayMissColor)
+    .drawFrame(noteFrameThickness, noteFrameColor);
 
   //長押し始点
   if (getNoteDrawStatus(note.endSecond) != NoteDrawStatus::afterJudgeLine) {
     if (getNoteDrawStatus(note.second) == NoteDrawStatus::within) {
-      getNoteQuad(note.lane, note.second).draw((note.beforeJudgeResult) ? LNSEActiveColor : LNSEMissColor);
+      getNoteQuad(note.lane, note.second).draw((note.beforeJudgeResult) ? LNSEActiveColor : LNSEMissColor)
+        .drawFrame(noteFrameThickness, noteFrameColor);
     }
     else if (getNoteDrawStatus(note.second) == NoteDrawStatus::afterJudgeLine) {
       if (note.beforeJudgeResult) {
-        getNoteQuad(note.lane, rhythmManager.getSecond()).draw((note.beforeJudgeResult) ? LNSEActiveColor : LNSEMissColor);
+        getNoteQuad(note.lane, rhythmManager.getSecond()).draw((note.beforeJudgeResult) ? LNSEActiveColor : LNSEMissColor)
+          .drawFrame(noteFrameThickness, noteFrameColor);
       }
       else {
-        getNoteQuad(note.lane, note.second).draw((note.beforeJudgeResult) ? LNSEActiveColor : LNSEMissColor);
+        getNoteQuad(note.lane, note.second).draw((note.beforeJudgeResult) ? LNSEActiveColor : LNSEMissColor)
+          .drawFrame(noteFrameThickness, noteFrameColor);
       }
     } else if (note.beforeJudgeResult && getNoteDrawStatus(note.second) == NoteDrawStatus::afterBottom) {
-      getNoteQuad(note.lane, rhythmManager.getSecond()).draw((note.beforeJudgeResult) ? LNSEActiveColor : LNSEMissColor);
+      getNoteQuad(note.lane, rhythmManager.getSecond()).draw((note.beforeJudgeResult) ? LNSEActiveColor : LNSEMissColor)
+        .drawFrame(noteFrameThickness, noteFrameColor);
     }
   }
 
   //長押し終点
   if (getNoteDrawStatus(note.endSecond) == NoteDrawStatus::within || 
     (!note.beforeJudgeResult && getNoteDrawStatus(note.endSecond) == NoteDrawStatus::afterJudgeLine)) {
-    getNoteQuad(note.lane, note.endSecond).draw((note.beforeJudgeResult) ? LNSEActiveColor : LNSEMissColor);
+    getNoteQuad(note.lane, note.endSecond).draw((note.beforeJudgeResult) ? LNSEActiveColor : LNSEMissColor)
+      .drawFrame(noteFrameThickness, noteFrameColor);
   }
 }
 
