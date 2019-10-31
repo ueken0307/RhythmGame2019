@@ -64,6 +64,10 @@ Load::Load(const InitData& init) : IScene(init), font(20) {
   }
 
   AudioAsset::Register(U"tap", Resource(U"button.mp3"));
+  for (const auto& judge : judges) {
+    TextureAsset::Register(judge.name,Resource(judge.name + U".png"), TextureDesc::Mipped);
+  }
+  TextureAsset::Register(miss.name, Resource(miss.name + U".png"), TextureDesc::Mipped);
 }
 
 void Load::update() {

@@ -15,6 +15,8 @@ constexpr int startNoteH = 1;
 constexpr int endNoteH = 30;
 constexpr double longNoteJudgeDuration = 0.25;
 
+constexpr Color laneBackColor = Color(40,40,40);
+
 constexpr int laneEffectLength = 500;
 
 constexpr Color LNSEActiveColor = Color(40, 100, 200); //ロングノーツの始点と終点の判定成功時のカラー
@@ -22,6 +24,28 @@ constexpr Color LNSEMissColor = Color(20, 50, 100); //ロングノーツの始点と終点の
 constexpr Color LNHalfwayActiveColor = Color(80, 200, 200); //ロングノーツの途中の判定成功時のカラー
 constexpr Color LNHalfwayMissColor = Color(40, 100, 100); //ロングノーツの途中の判定失敗時時のカラー
 
+constexpr double judgeEffectSecond = 0.25;
+constexpr int judgeEffectStartY = judgeLineY - 100;
+constexpr int judgeEffectDstY = judgeEffectStartY - 100;
+
+
+struct JudgeStrEffect : IEffect {
+  int lane;
+  String judgeAssetName;
+
+  JudgeStrEffect(const int lane, const String judgeAssetName)
+    : lane(lane), judgeAssetName(judgeAssetName) {
+  }
+
+  bool update(double t) override {
+    if (1 <= lane && lane <= 4) {
+      int cX = (centerX - (judgeLineW / 2) + judgeLineW/8) + (lane-1)*(judgeLineW / 4);
+      int cY = judgeEffectStartY + (judgeEffectDstY - judgeEffectStartY) * (t/judgeEffectSecond);
+      TextureAsset(judgeAssetName).scaled(0.25).drawAt(cX, cY);
+    }
+    return t < judgeEffectSecond;
+  }
+};
 
 
 // (0 < input < 1)  (0 < output < 1)
@@ -107,6 +131,13 @@ Game::Game(const InitData& init) : IScene(init), font(30), isStart(false), isMus
 
   //タップ音のロード
   AudioAsset::Preload(U"tap");
+
+  //エフェクト画像のプリロード
+  for (const auto& judge : judges) {
+    TextureAsset::Preload(judge.name);
+  }
+  TextureAsset::Preload(miss.name);
+
 
   laneEffect = Texture(Resource(U"laneEffect.png"));
 
@@ -204,6 +235,7 @@ void Game::judgeNormal(NoteData& note) {
   for (size_t i = 0; i < judges.size(); i++) {
     if (abs(diff) < judges.at(i).duration) {
       getData().result.incJudge(i, diff);
+      effect.add<JudgeStrEffect>(note.lane,judges.at(i).name);
       note.isJudgeEnded = true;
       note.isVisible = false;
       break;
@@ -219,6 +251,7 @@ void Game::judgeLong(NoteData& note, bool beforeKeyStatus) {
     for (size_t i = 0; i < judges.size(); i++) {
       if (!beforeKeyStatus && abs(diff) < judges.at(i).duration) {
         getData().result.incJudge(i, diff);
+        effect.add<JudgeStrEffect>(note.lane, judges.at(i).name);
         note.inLong = true;
         note.beforeJudgeResult = true;
         break;
@@ -228,6 +261,7 @@ void Game::judgeLong(NoteData& note, bool beforeKeyStatus) {
     //終点の判定
     if (!note.firstKeyStatus) {
       getData().result.incJudge(0, 0.0);
+      effect.add<JudgeStrEffect>(note.lane, judges.at(0).name);
       note.beforeJudgeResult = true;
       note.isJudgeEnded = true;
     }
@@ -241,6 +275,7 @@ void Game::judgeLong(NoteData& note, bool beforeKeyStatus) {
 
     if (!note.firstKeyStatus && (nowJudgeDurationStart <= fromStartSecond && fromStartSecond < nowJudgeDurationEnd)) {
       getData().result.incJudge(0, 0.0);
+      effect.add<JudgeStrEffect>(note.lane, judges.at(0).name);
       note.beforeJudgeResult = true;
       if (note.inLongJudgeIndex + 1 < floor((note.endSecond - note.second) / longNoteJudgeDuration)) {
         //インデックスが増やせないときは判定終わりにする
@@ -267,6 +302,7 @@ void Game::excludeEndedNote() {
         //判定が終わってなく、一番ゆるい判定内から外れていたらミスにする
         if (!note.isJudgeEnded && getJudgeDiff(note.second) > mostLooseJudge) {
           getData().result.incMiss();
+          effect.add<JudgeStrEffect>(note.lane, miss.name);
           note.isJudgeEnded = true;
         }
 
@@ -281,6 +317,7 @@ void Game::excludeEndedNote() {
           //始点の判定が、一番ゆるい判定内から外れていたらミスにする
           if (getJudgeDiff(note.second) > mostLooseJudge) {
             getData().result.incMiss();
+            effect.add<JudgeStrEffect>(note.lane, miss.name);
             note.firstKeyStatus = true;
             note.inLong = true;
             note.beforeJudgeResult = false;
@@ -291,6 +328,7 @@ void Game::excludeEndedNote() {
           //終点までの判定が終わってなくて、一番ゆるい判定内から外れていたらミスにする
           if (!note.isJudgeEnded && getJudgeDiff(note.endSecond) > mostLooseJudge) {
             getData().result.incMiss();
+            effect.add<JudgeStrEffect>(note.lane, miss.name);
             note.isJudgeEnded = true;
             note.beforeJudgeResult = false;
           }
@@ -307,6 +345,7 @@ void Game::excludeEndedNote() {
           double nowJudgeDurationEnd = (note.inLongJudgeIndex + 1) * longNoteJudgeDuration;
           if (getJudgeDiff(note.second) >= nowJudgeDurationEnd) {
             getData().result.incMiss();
+            effect.add<JudgeStrEffect>(note.lane, miss.name);
             note.beforeJudgeResult = false;
             if (note.inLongJudgeIndex + 1 < floor((note.endSecond - note.second) / longNoteJudgeDuration)) {
               //インデックスが増やせないときは判定終わりにする
@@ -329,6 +368,9 @@ void Game::excludeEndedNote() {
 
 
 void Game::draw() const {
+  Quad({ centerX - upW / 2, upY }, { centerX + upW / 2, upY },
+   { centerX + bottomW / 2, bottomY }, { centerX - bottomW / 2, bottomY }).draw(laneBackColor);
+
   for (auto& i : vLines) {
     i.draw();
   }
@@ -338,6 +380,7 @@ void Game::draw() const {
 
   drawLaneEffect();
   drawNotes();
+  effect.update();
 }
 
 void Game::drawFadeIn(double t) const {
@@ -391,13 +434,15 @@ void Game::drawLongNote(const NoteData& note) const {
     if (getNoteDrawStatus(note.second) == NoteDrawStatus::within) {
       getNoteQuad(note.lane, note.second).draw((note.beforeJudgeResult) ? LNSEActiveColor : LNSEMissColor);
     }
-    else if (getNoteDrawStatus(note.second) == NoteDrawStatus::afterJudgeLine || getNoteDrawStatus(note.second) == NoteDrawStatus::afterBottom) {
+    else if (getNoteDrawStatus(note.second) == NoteDrawStatus::afterJudgeLine) {
       if (note.beforeJudgeResult) {
         getNoteQuad(note.lane, rhythmManager.getSecond()).draw((note.beforeJudgeResult) ? LNSEActiveColor : LNSEMissColor);
       }
       else {
         getNoteQuad(note.lane, note.second).draw((note.beforeJudgeResult) ? LNSEActiveColor : LNSEMissColor);
       }
+    } else if (note.beforeJudgeResult && getNoteDrawStatus(note.second) == NoteDrawStatus::afterBottom) {
+      getNoteQuad(note.lane, rhythmManager.getSecond()).draw((note.beforeJudgeResult) ? LNSEActiveColor : LNSEMissColor);
     }
   }
 

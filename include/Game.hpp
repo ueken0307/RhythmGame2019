@@ -48,6 +48,7 @@ private:
 
   Font font;
   Texture laneEffect;
+  Effect effect;
   bool isStart, isMusicStarted;
   std::array<Line,5> vLines; //vertical lines
   double toJudgeLineNoteSpeed;
