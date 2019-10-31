@@ -7,8 +7,9 @@ constexpr int upY = 0;
 constexpr int bottomY = 1080;
 constexpr int upW = 250;
 constexpr int bottomW = 1400;
+constexpr double laneLineThickness = 2.0;
 
-constexpr Color laneLineColor;
+constexpr Color laneLineColor(255,255,255);
 
 //Background
 constexpr Color laneBackColor(40, 40, 40);
@@ -403,7 +404,7 @@ void Game::excludeEndedNote() {
 void Game::draw() const {
   laneBackQuad.draw(laneBackColor);
 
-  for (const auto& i : vLines) { i.draw(laneLineColor); }
+  for (const auto& i : vLines) { i.draw(laneLineThickness, laneLineColor); }
   judgeLine.draw(judgeLineThickness,judgeLineColor);
 
   drawLaneEffect();
