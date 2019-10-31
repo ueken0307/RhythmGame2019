@@ -1,5 +1,6 @@
 {
   "MusicFolderPath":"../../../Musics/",
   "OffsetFrame":0,
-  "isFullScreen":false
+  "isFullScreen":false,
+  "FrameRate":60
 }

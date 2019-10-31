@@ -47,6 +47,7 @@ void Main() {
     auto resolutions = Graphics::GetFullscreenResolutions();
     Window::SetFullscreen(true , resolutions.back(), WindowResizeOption::KeepSceneSize);
   }
+  Graphics::SetTargetFrameRateHz(reader[U"FrameRate"].get<int>());
 
 
 
