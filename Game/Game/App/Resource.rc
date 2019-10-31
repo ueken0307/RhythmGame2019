@@ -59,7 +59,9 @@ Resource(engine/soundfont/GMGSx.sf2.zstdcmp)
 //effect sound
 Resource(button.mp3)
 Resource(laneEffect.png)
-
+Resource(perfect.png)
+Resource(good.png)
+Resource(miss.png)
 
 
 /* 
