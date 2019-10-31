@@ -66,7 +66,11 @@ public:
   void incLevelNum();
   void decLeveNum();
   double getNoteSpeed();
+  void incNoteSpeed();
+  void decNoteSpeed();
   double getJudgeOffset();
+  void incJudgeOffset();
+  void decJudgeOffset();
   String getScoreFileName();
   MusicInfo& getSelectedInfo();
   MusicInfo& getInfoFromSelected(size_t offset);

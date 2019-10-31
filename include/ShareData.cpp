@@ -117,8 +117,24 @@ double ShareData::getNoteSpeed() {
   return noteSpeed;
 };
 
+void ShareData::incNoteSpeed() {
+  noteSpeed += 0.1;
+}
+
+void ShareData::decNoteSpeed() {
+  if (noteSpeed > 0.2) noteSpeed -= 0.1;
+}
+
 double ShareData::getJudgeOffset() {
   return judgeOffset;
+}
+
+void ShareData::incJudgeOffset() {
+  judgeOffset += 0.01;
+}
+
+void ShareData::decJudgeOffset() {
+  judgeOffset -= 0.01;
 }
 
 String ShareData::getScoreFileName() {

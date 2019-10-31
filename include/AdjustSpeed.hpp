@@ -16,7 +16,7 @@ public:
   void drawFadeOut(double t) const override;
 
 private:
-  Font font;
+  Font font30,font60;
 };
 
 #endif // !ADJUST_HPP
