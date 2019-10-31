@@ -1,7 +1,7 @@
 #include "DrawUtility.hpp"
 
-constexpr int backgroundW = 1920;
-constexpr int backgroundH = 1080;
+constexpr int sceneW = 1920;
+constexpr int sceneH = 1080;
 
 DrawBackground::DrawBackground(){
   backgroundColor = Color(100);
@@ -98,4 +98,29 @@ void DrawBackground::random() {
   );
 
   
+}
+
+constexpr int drawGuideStartY = 1000;
+constexpr double drawGuideLineThickness = 2.0;
+constexpr Color drawGuideLineColor(180), drawGuideFontColor(180);
+constexpr Color drawGuideBackColor1(40), drawGuideBackColor2(80);
+constexpr Color drawGuideActiveBackColor(180), drawGuideActiveFontColor(40);
+
+DrawGuide::DrawGuide() : font(30){ }
+
+void DrawGuide::set(std::vector<String> guideStrs) {
+  this->guideStrs = guideStrs;
+  keys = { KeyD, KeyF, KeyJ, KeyK };
+}
+
+void DrawGuide::draw() {
+  Line({0,drawGuideStartY }, {sceneW, drawGuideStartY}).draw(drawGuideLineThickness, drawGuideLineColor);
+  for (size_t i = 0; i < guideStrs.size(); ++i) {
+    Rect(i * (sceneW / guideStrs.size()), drawGuideStartY, sceneW / guideStrs.size(), sceneH - drawGuideStartY)
+      .draw((keys.at(i).pressed()) ? drawGuideActiveBackColor : ((i%2)? drawGuideBackColor1 : drawGuideBackColor2));
+
+    font(guideStrs.at(i)).drawAt((sceneW / guideStrs.size())/2 + i * (sceneW / guideStrs.size()),(sceneH + drawGuideStartY)/2,
+      (keys.at(i).pressed())? drawGuideActiveFontColor : drawGuideFontColor);
+  }
+
 }

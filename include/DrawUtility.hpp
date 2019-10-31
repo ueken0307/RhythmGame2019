@@ -21,10 +21,18 @@ private:
 
 };
 
-/*
-class DrawGuide {
 
-};*/
+class DrawGuide {
+public:
+  DrawGuide();
+  void set(std::vector<String> guideStrs);
+  void draw();
+
+private:
+  Font font;
+  std::vector<Key> keys;
+  std::vector<String> guideStrs;
+};
 
 #endif // !DRAW_UTILITY_HPP
 

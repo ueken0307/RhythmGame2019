@@ -76,6 +76,7 @@ public:
   std::array<String, 3> levelFileName;
   ResultData result;
   DrawBackground drawBackground;
+  DrawGuide drawGuide;
 
 private:
   String musicFolderPath;

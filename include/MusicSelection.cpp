@@ -35,6 +35,7 @@ constexpr double moveDuration = 0.20;
 
 MusicSelection::MusicSelection(const InitData& init) : IScene(init), font30(30), font60(60), moveStatus(MoveStatus::NotMove) {
   getData().drawBackground.start();
+  getData().drawGuide.set(std::vector<String>({U"←難易度",U"難易度→",U"選曲↓",U"選曲↑" }));
 }
 
 
@@ -48,13 +49,13 @@ void MusicSelection::update() {
     }
   }
 
-  if (moveStatus == MoveStatus::NotMove && KeyDown.pressed()) {
+  if (moveStatus == MoveStatus::NotMove && KeyJ.pressed()) {
     getData().incSelected();
     moveStatus = MoveStatus::Inc;
     stopwatch.restart();
   }
 
-  if (moveStatus == MoveStatus::NotMove && KeyUp.pressed()) {
+  if (moveStatus == MoveStatus::NotMove && KeyK.pressed()) {
     getData().decSelected();
     moveStatus = MoveStatus::Dec;
     stopwatch.restart();
@@ -66,11 +67,11 @@ void MusicSelection::update() {
     moveStatus = MoveStatus::NotMove;
   }
 
-  if (KeyLeft.down()) {
+  if (KeyD.down()) {
     getData().decLeveNum();
   }
 
-  if (KeyRight.down()) {
+  if (KeyF.down()) {
     getData().incLevelNum();
   }
 }
@@ -152,7 +153,7 @@ void MusicSelection::draw() const {
   }
 
   // *** Draw Guide ***
-  Rect(0, 1000, 1920, 80).draw(Color(40));
+  getData().drawGuide.draw();
 }
 
 void MusicSelection::drawFadeIn(double t) const {
