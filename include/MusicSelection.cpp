@@ -40,7 +40,7 @@ constexpr double moveDuration = 0.20;
 MusicSelection::MusicSelection(const InitData& init) : IScene(init), font30(30), font60(60), moveStatus(MoveStatus::NotMove) {
   getData().drawBackground.random();
   getData().drawBackground.start();
-  getData().drawGuide.set(std::vector<String>({U"←難易度",U"難易度→",U"選曲↓",U"選曲↑" }));
+  getData().drawGuide.set(std::vector<String>({U"難易度を下げる",U"難易度を上げる",U"次の曲",U"前の曲" }));
 }
 
 
