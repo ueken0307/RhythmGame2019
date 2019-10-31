@@ -71,6 +71,7 @@ public:
   double getJudgeOffset();
   void incJudgeOffset();
   void decJudgeOffset();
+  double getTotalOffset();
   String getScoreFileName();
   MusicInfo& getSelectedInfo();
   MusicInfo& getInfoFromSelected(size_t offset);

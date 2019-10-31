@@ -325,7 +325,7 @@ void Game::judgeLong(NoteData& note, bool beforeKeyStatus) {
 double Game::getJudgeDiff(double noteSecond) {
   //早いときは負の値、遅いときは正の値になる
   //     ---> 早いときはjudgeOffsetを正の値に、遅いときは負の値にする 
-  return rhythmManager.getSecond() - noteSecond + getData().getJudgeOffset();
+  return rhythmManager.getSecond() - noteSecond + getData().getTotalOffset();
 }
 
 void Game::excludeEndedNote() {

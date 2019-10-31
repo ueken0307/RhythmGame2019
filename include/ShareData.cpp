@@ -137,6 +137,10 @@ void ShareData::decJudgeOffset() {
   judgeOffset -= 0.01;
 }
 
+double ShareData::getTotalOffset() {
+  return globalOffset + judgeOffset;
+}
+
 String ShareData::getScoreFileName() {
   return infos.at(selected).getFolderPath() + levelFileName.at(levelNum);
 }
