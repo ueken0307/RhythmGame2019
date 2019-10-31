@@ -59,8 +59,8 @@ struct JudgeStrEffect : IEffect {
 
   bool update(double t) override {
     if (1 <= lane && lane <= 4) {
-      int cX = static_cast<int>((centerX - (judgeLineW / 2) + judgeLineW/8) + (lane-1)*(judgeLineW / 4));
-      int cY = static_cast<int>(judgeEffectStartY + (judgeEffectDstY - judgeEffectStartY) * (t/judgeEffectSecond));
+      double cX = (centerX - (judgeLineW / 2) + judgeLineW/8) + (lane-1)*(judgeLineW / 4);
+      double cY = judgeEffectStartY + (judgeEffectDstY - judgeEffectStartY) * (t/judgeEffectSecond);
       TextureAsset(judgeAssetName).scaled(0.25).drawAt(cX, cY);
     }
     return t < judgeEffectSecond;
@@ -491,9 +491,9 @@ void Game::drawLongNote(const NoteData& note) const {
 }
 
 Quad Game::getNoteQuad(int lane, double second) const {
-  int noteCenterY = getNoteY(second);
-  int noteHeight = getNoteHeight(second);
-  int noteUpY = static_cast<int>(noteCenterY - noteHeight / 2.0), noteBottomY = static_cast<int>(noteCenterY + noteHeight/2.0);
+  double noteCenterY = getNoteY(second);
+  double noteHeight = getNoteHeight(second);
+  double noteUpY = noteCenterY - noteHeight / 2.0, noteBottomY = noteCenterY + noteHeight / 2.0;
 
   return Quad(
     { getNoteStartX(noteUpY,lane),noteUpY },
@@ -504,14 +504,14 @@ Quad Game::getNoteQuad(int lane, double second) const {
 }
 
 Quad Game::getLongQuad(const NoteData& note) const {
-  int longNoteUpY = 0;
+  double longNoteUpY = 0;
   if (getNoteDrawStatus(note.endSecond) == NoteDrawStatus::before) {
     longNoteUpY = upY;
   } else {
     longNoteUpY = getNoteY(note.endSecond);
   }
 
-  int longNoteBottomY = 0;
+  double longNoteBottomY = 0;
   if (note.beforeJudgeResult) {
     longNoteBottomY = judgeLineY;
   } else {
@@ -534,9 +534,9 @@ Quad Game::getLongQuad(const NoteData& note) const {
     { getNoteStartX(longNoteBottomY,note.lane),longNoteBottomY });
 }
 
-int Game::getNoteY(double t) const {
+double Game::getNoteY(double t) const {
   double arg = (rhythmManager.getSecond() + toJudgeLineNoteSpeed - t) / toBottomNoteSpeed;
-  return  static_cast<int>(convertRange(0,1, noteYFunc(arg),upY,bottomY));
+  return  convertRange(0,1, noteYFunc(arg),upY,bottomY);
 }
 
 double Game::getNoteHeight(double t) const {
@@ -544,22 +544,22 @@ double Game::getNoteHeight(double t) const {
   return  convertRange(0, 1, noteYFunc(arg), startNoteH, endNoteH);
 }
 
-int Game::getNoteStartX(int y, int lane) const {
+double Game::getNoteStartX(double y, int lane) const {
   size_t index;
   if (lane == 0) index = 0;
   else if (lane == 5) index = 2;
   else index = lane - 1;
 
-  return static_cast<int>(convertRange(upY, bottomY, y, vLines.at(index).begin.x, vLines.at(index).end.x));
+  return convertRange(upY, bottomY, y, vLines.at(index).begin.x, vLines.at(index).end.x);
 }
 
-int Game::getNoteEndX(int y, int lane) const {
+double Game::getNoteEndX(double y, int lane) const {
   size_t index;
   if (lane == 0) index = 2;
   else if (lane == 5) index = 4;
   else index = lane;
 
-  return static_cast<int>(convertRange(upY, bottomY, y, vLines.at(index).begin.x, vLines.at(index).end.x));
+  return convertRange(upY, bottomY, y, vLines.at(index).begin.x, vLines.at(index).end.x);
 }
 
 NoteDrawStatus Game::getNoteDrawStatus(double t) const {
