@@ -36,6 +36,19 @@ void Main() {
     .add<Game>(State::Game)
     .add<Result>(State::Result);
   //----------  
+  JSONReader reader(U"config.json");
+  if (!reader) {
+    throw Error(U"Cannot load config.json");
+  }
+  sm.get()->setMusicFolderPath(reader[U"MusicFolderPath"].get<String>());
+  sm.get()->setGlobalOffset((1.0/60) * (reader[U"OffsetFrame"].get<int>()));
+
+  if (reader[U"isFullScreen"].get<bool>()) {
+    auto resolutions = Graphics::GetFullscreenResolutions();
+    Window::SetFullscreen(true , resolutions.back(), WindowResizeOption::KeepSceneSize);
+  }
+
+
 
   while (s3d::System::Update()) {
     sm.update();

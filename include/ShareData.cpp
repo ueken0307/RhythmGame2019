@@ -68,6 +68,23 @@ int ResultData::getMissCounts() {
 }
 
 
+
+void ShareData::setMusicFolderPath(String path) {
+  musicFolderPath = path;
+}
+
+String ShareData::getMusicFolderPath() {
+  return musicFolderPath;
+}
+
+void ShareData::setGlobalOffset(double offset) {
+  globalOffset = offset;
+}
+
+double ShareData::getGlobalOffset() {
+  return globalOffset;
+}
+
 size_t ShareData::getSelected() const {
   return selected;
 };

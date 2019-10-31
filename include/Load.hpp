@@ -10,7 +10,6 @@
 #include "MusicInfo.hpp"
 #include "Utility.hpp"
 
-#define DEVELOP_MUSICS_PATH "../../../Musics/"
 
 class Load :public SceneManager<State, ShareData>::Scene {
 public:

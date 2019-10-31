@@ -54,6 +54,10 @@ public:
     judgeOffset = 0.0;
   };
 
+  void setMusicFolderPath(String path);
+  String getMusicFolderPath();
+  void setGlobalOffset(double offset);
+  double getGlobalOffset();
 
   size_t getSelected() const;
   void incSelected();
@@ -74,9 +78,13 @@ public:
   DrawBackground drawBackground;
 
 private:
+  String musicFolderPath;
+  double globalOffset;
+
   size_t selected, levelNum;
   double noteSpeed;
   double judgeOffset;
+
 };
 
 
