@@ -54,64 +54,21 @@ public:
     judgeOffset = 0.0;
   };
 
+
+  size_t getSelected() const;
+  void incSelected();
+  void decSelected();
+  size_t getLevelNum() const;
+  void incLevelNum();
+  void decLeveNum();
+  double getNoteSpeed();
+  double getJudgeOffset();
+  String getScoreFileName();
+  MusicInfo& getSelectedInfo();
+  MusicInfo& getInfoFromSelected(size_t offset);
+
+
   std::vector<MusicInfo> infos;
-
-  size_t getSelected() const {
-    return selected;
-  };
-
-  void incSelected() {
-    selected = (selected + 1) % infos.size();
-  };
-
-  void decSelected() {
-    selected = (selected == 0) ? (selected + infos.size() - 1) : (selected - 1);
-  };
-
-  size_t getLevelNum() const {
-    return levelNum;
-  };
-
-  void incLevelNum() {
-    if (levelNum < MAX_LEVEL_NUM) {
-      levelNum++;
-    }
-  };
-
-  void decLeveNum() {
-    if (levelNum > 0) {
-      levelNum--;
-    }
-  };
-
-  double getNoteSpeed() {
-    return noteSpeed;
-  };
-
-  double getJudgeOffset() {
-    return judgeOffset;
-  }
-
-  String getScoreFileName() {
-    return infos.at(selected).getFolderPath() + levelFileName.at(levelNum);
-  }
-
-  MusicInfo& getSelectedInfo() {
-    return infos.at(selected);
-  }
-
-  MusicInfo& getInfoFromSelected(size_t offset) {
-    size_t index = selected + offset;
-
-    if (index < 0) {
-      index += infos.size();
-    } else if (index >= infos.size()) {
-      index %= infos.size();
-    }
-
-    return infos.at(index);
-  }
-
   std::array<String, 3> levelFileName;
   ResultData result;
   DrawBackground drawBackground;

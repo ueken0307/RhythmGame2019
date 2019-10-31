@@ -66,3 +66,61 @@ std::vector<double>& ResultData::getJudgeTimings(size_t judgeIndex) {
 int ResultData::getMissCounts() {
   return missCounts;
 }
+
+
+size_t ShareData::getSelected() const {
+  return selected;
+};
+
+void ShareData::incSelected() {
+  selected = (selected + 1) % infos.size();
+};
+
+void ShareData::decSelected() {
+  selected = (selected == 0) ? (selected + infos.size() - 1) : (selected - 1);
+};
+
+size_t ShareData::getLevelNum() const {
+  return levelNum;
+};
+
+void ShareData::incLevelNum() {
+  if (levelNum < MAX_LEVEL_NUM) {
+    levelNum++;
+  }
+};
+
+void ShareData::decLeveNum() {
+  if (levelNum > 0) {
+    levelNum--;
+  }
+};
+
+double ShareData::getNoteSpeed() {
+  return noteSpeed;
+};
+
+double ShareData::getJudgeOffset() {
+  return judgeOffset;
+}
+
+String ShareData::getScoreFileName() {
+  return infos.at(selected).getFolderPath() + levelFileName.at(levelNum);
+}
+
+MusicInfo& ShareData::getSelectedInfo() {
+  return infos.at(selected);
+}
+
+MusicInfo& ShareData::getInfoFromSelected(size_t offset) {
+  size_t index = selected + offset;
+
+  if (index < 0) {
+    index += infos.size();
+  }
+  else if (index >= infos.size()) {
+    index %= infos.size();
+  }
+
+  return infos.at(index);
+}
