@@ -1,33 +1,52 @@
 #include "Game.hpp"
 
 
+//*** Lane ***
 constexpr int centerX = 1920 / 2;
 constexpr int upY = 0;
 constexpr int bottomY = 1080;
 constexpr int upW = 250;
 constexpr int bottomW = 1400;
+
+constexpr Color laneLineColor;
+
+//Background
+constexpr Color laneBackColor(40, 40, 40);
+constexpr Quad laneBackQuad({ centerX - upW / 2, upY }, { centerX + upW / 2, upY },
+  { centerX + bottomW / 2, bottomY }, { centerX - bottomW / 2, bottomY });
+
+
+//*** Judge Line ***
 constexpr int judgeLineY = 1000;
 constexpr double judgeLineW = convertRange(upY,bottomY,judgeLineY,upW,bottomW);
+constexpr double judgeLineThickness = 4.0;
+
+constexpr Line judgeLine({ centerX - judgeLineW / 2.0, judgeLineY },{ centerX + judgeLineW / 2.0, judgeLineY });
+constexpr Color judgeLineColor(220, 30, 30);
+
+//*** Note ***
+//normal
 constexpr int startNoteH = 1;
 constexpr int endNoteH = 30;
+
+//long
 constexpr double longNoteJudgeDuration = 0.25;
 
+constexpr Color LNSEActiveColor(40, 100, 200); //ロングノーツの始点と終点の判定成功時のカラー
+constexpr Color LNSEMissColor(20, 50, 100); //ロングノーツの始点と終点の判定失敗時時のカラー
+constexpr Color LNHalfwayActiveColor(80, 200, 200); //ロングノーツの途中の判定成功時のカラー
+constexpr Color LNHalfwayMissColor(40, 100, 100); //ロングノーツの途中の判定失敗時時のカラー
 
-
+//*** Lane Effect ***
 constexpr int laneEffectLength = 500;
 
-constexpr Color LNSEActiveColor = Color(40, 100, 200); //ロングノーツの始点と終点の判定成功時のカラー
-constexpr Color LNSEMissColor = Color(20, 50, 100); //ロングノーツの始点と終点の判定失敗時時のカラー
-constexpr Color LNHalfwayActiveColor = Color(80, 200, 200); //ロングノーツの途中の判定成功時のカラー
-constexpr Color LNHalfwayMissColor = Color(40, 100, 100); //ロングノーツの途中の判定失敗時時のカラー
 
+//*** Judge Effect ***
 constexpr double judgeEffectSecond = 0.25;
 constexpr int judgeEffectStartY = judgeLineY - 100;
 constexpr int judgeEffectDstY = judgeEffectStartY - 100;
 
-constexpr Color laneBackColor = Color(40, 40, 40);
-constexpr Quad laneBackQuad = Quad({ centerX - upW / 2, upY }, { centerX + upW / 2, upY },
-  { centerX + bottomW / 2, bottomY }, { centerX - bottomW / 2, bottomY });
+
 
 
 struct JudgeStrEffect : IEffect {
@@ -384,15 +403,13 @@ void Game::excludeEndedNote() {
 void Game::draw() const {
   laneBackQuad.draw(laneBackColor);
 
-  for (auto& i : vLines) {
-    i.draw();
-  }
-
-  Line({ centerX - judgeLineW / 2.0, judgeLineY },
-    { centerX + judgeLineW / 2.0, judgeLineY }).draw(4, Color(220, 30, 30));
+  for (const auto& i : vLines) { i.draw(laneLineColor); }
+  judgeLine.draw(judgeLineThickness,judgeLineColor);
 
   drawLaneEffect();
+
   drawNotes();
+
   effect.update();
 }
 
