@@ -1,8 +1,5 @@
 #include "Game.hpp"
 
-#define _USE_MATH_DEFINES
-#include <math.h>
-
 
 constexpr int centerX = 1920 / 2;
 constexpr int upY = 0;
@@ -15,7 +12,7 @@ constexpr int startNoteH = 1;
 constexpr int endNoteH = 30;
 constexpr double longNoteJudgeDuration = 0.25;
 
-constexpr Color laneBackColor = Color(40,40,40);
+
 
 constexpr int laneEffectLength = 500;
 
@@ -28,6 +25,10 @@ constexpr double judgeEffectSecond = 0.25;
 constexpr int judgeEffectStartY = judgeLineY - 100;
 constexpr int judgeEffectDstY = judgeEffectStartY - 100;
 
+constexpr Color laneBackColor = Color(40, 40, 40);
+constexpr Quad laneBackQuad = Quad({ centerX - upW / 2, upY }, { centerX + upW / 2, upY },
+  { centerX + bottomW / 2, bottomY }, { centerX - bottomW / 2, bottomY });
+
 
 struct JudgeStrEffect : IEffect {
   int lane;
@@ -39,8 +40,8 @@ struct JudgeStrEffect : IEffect {
 
   bool update(double t) override {
     if (1 <= lane && lane <= 4) {
-      int cX = (centerX - (judgeLineW / 2) + judgeLineW/8) + (lane-1)*(judgeLineW / 4);
-      int cY = judgeEffectStartY + (judgeEffectDstY - judgeEffectStartY) * (t/judgeEffectSecond);
+      int cX = static_cast<int>((centerX - (judgeLineW / 2) + judgeLineW/8) + (lane-1)*(judgeLineW / 4));
+      int cY = static_cast<int>(judgeEffectStartY + (judgeEffectDstY - judgeEffectStartY) * (t/judgeEffectSecond));
       TextureAsset(judgeAssetName).scaled(0.25).drawAt(cX, cY);
     }
     return t < judgeEffectSecond;
@@ -50,11 +51,10 @@ struct JudgeStrEffect : IEffect {
 
 // (0 < input < 1)  (0 < output < 1)
 double noteYFunc(double input) {
-  double start = 1.7 * M_PI;
-  double end = 2.0 * M_PI;
+  double start = 1.7 * s3d::Math::Pi;
+  double end = 2.0 * s3d::Math::Pi;
   double x = per2v(start, end, input);
   double tmp = abs(sin(end) - sin(start));
-  //double x = ((3.0 / 2.0) * M_PI) + ((1.0 / 2.0) * M_PI) * t;
   return pow(abs(sin(x) - sin(start)) / tmp, 2);
 }
 
@@ -117,7 +117,7 @@ Game::Game(const InitData& init) : IScene(init), font(30), isStart(false), isMus
     for (const auto& note : laneNotes) {
       if (note.length != 0) {
         //I“_ + “r’†
-        totalNotes += 1 + floor((note.endSecond - note.second) / longNoteJudgeDuration);
+        totalNotes += 1 + static_cast<int>(floor((note.endSecond - note.second) / longNoteJudgeDuration));
       }
     }
   }
@@ -157,23 +157,25 @@ Game::Game(const InitData& init) : IScene(init), font(30), isStart(false), isMus
 void Game::update() {
   if (isStart) {
     rhythmManager.update();
-    input();
-    excludeEndedNote();
 
     if (!isMusicStarted && rhythmManager.getSecond() >= rhythmManager.getMusicStartSec()) {
       isMusicStarted = true;
       AudioAsset(getData().getSelectedInfo().getAssetName()).play();
     }
 
+    input();
+    excludeEndedNote();
+
+    /*
     for (auto& laneNotes : allNotes) {
       for (auto& note : laneNotes) {
         if (rhythmManager.getStartMeasure() * 9600 <= note.count && !note.isJudgeEnded && abs(note.second - rhythmManager.getSecond()) <= (1 / 60.0) * 2) {
-          //AudioAsset(U"tap").stop();
-          //AudioAsset(U"tap").play();
-          //note.isJudgeEnded = true;
+          AudioAsset(U"tap").stop();
+          AudioAsset(U"tap").play();
+          note.isJudgeEnded = true;
         }
       }
-    }
+    }*/
 
   } else {
     if (KeySpace.pressed()) {
@@ -368,8 +370,7 @@ void Game::excludeEndedNote() {
 
 
 void Game::draw() const {
-  Quad({ centerX - upW / 2, upY }, { centerX + upW / 2, upY },
-   { centerX + bottomW / 2, bottomY }, { centerX - bottomW / 2, bottomY }).draw(laneBackColor);
+  laneBackQuad.draw(laneBackColor);
 
   for (auto& i : vLines) {
     i.draw();

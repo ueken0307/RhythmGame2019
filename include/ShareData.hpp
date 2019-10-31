@@ -100,8 +100,8 @@ public:
     return infos.at(selected);
   }
 
-  MusicInfo& getInfoFromSelected(int offset) {
-    int index = selected + offset;
+  MusicInfo& getInfoFromSelected(size_t offset) {
+    size_t index = selected + offset;
 
     if (index < 0) {
       index += infos.size();
