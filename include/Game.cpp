@@ -99,16 +99,28 @@ Game::Game(const InitData& init) : IScene(init), font(30), isStart(false), isMus
   //---------note--------
   int totalNotes = 0;
   for (const auto& i : reader[U"notes"].arrayView()) {
-    allNotes.at(i[U"lane"].get<int32>()).push_back(
-      NoteData(
-        i[U"time"].get<int32>(),
-        rhythmManager.BtoS(i[U"time"].get<int32>()),
-        rhythmManager.BtoS(i[U"time"].get<int32>() + i[U"length"].get<int32>()),
-        i[U"lane"].get<int32>(),
-        i[U"length"].get<int32>()
-      )
-    );
-
+    if (i[U"length"].get<int32>() != 0 && (i[U"lane"].get<int32>() == 0 || i[U"lane"].get<int32>() == 5)) {
+      //ロングノーツで端っこのレーンの場合は通常ノーツに変更する
+      allNotes.at(i[U"lane"].get<int32>()).push_back(
+        NoteData(
+          i[U"time"].get<int32>(),
+          rhythmManager.BtoS(i[U"time"].get<int32>()),
+          rhythmManager.BtoS(i[U"time"].get<int32>() + 0),
+          i[U"lane"].get<int32>(),
+          0
+        )
+      );
+    } else {
+      allNotes.at(i[U"lane"].get<int32>()).push_back(
+        NoteData(
+          i[U"time"].get<int32>(),
+          rhythmManager.BtoS(i[U"time"].get<int32>()),
+          rhythmManager.BtoS(i[U"time"].get<int32>() + i[U"length"].get<int32>()),
+          i[U"lane"].get<int32>(),
+          i[U"length"].get<int32>()
+        )
+      );
+    }
     totalNotes++;
   }
 
