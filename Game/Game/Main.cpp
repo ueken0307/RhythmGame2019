@@ -41,7 +41,7 @@ void Main() {
     throw Error(U"Cannot load config.json");
   }
   sm.get()->setMusicFolderPath(reader[U"MusicFolderPath"].get<String>());
-  sm.get()->setGlobalOffset((1.0/60) * (reader[U"OffsetFrame"].get<int>()));
+  sm.get()->setGlobalOffset(reader[U"GlobalOffset"].get<double>());
 
   if (reader[U"isFullScreen"].get<bool>()) {
     auto resolutions = Graphics::GetFullscreenResolutions();
