@@ -68,6 +68,7 @@ Load::Load(const InitData& init) : IScene(init), font(20) {
     TextureAsset::Register(judge.name,Resource(judge.name + U".png"), TextureDesc::Mipped);
   }
   TextureAsset::Register(miss.name, Resource(miss.name + U".png"), TextureDesc::Mipped);
+  TextureAsset::Register(U"elem", Resource(U"elem.png"));
 }
 
 void Load::update() {

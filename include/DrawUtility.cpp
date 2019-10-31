@@ -102,7 +102,7 @@ void DrawBackground::random() {
 
 constexpr int drawGuideStartY = 1000;
 constexpr double drawGuideLineThickness = 2.0;
-constexpr Color drawGuideLineColor(180), drawGuideFontColor(180);
+constexpr Color drawGuideLineColor(0, 255, 250), drawGuideFontColor(180);
 constexpr Color drawGuideBackColor1(40), drawGuideBackColor2(80);
 constexpr Color drawGuideActiveBackColor(180), drawGuideActiveFontColor(40);
 

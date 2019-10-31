@@ -7,14 +7,18 @@ constexpr int elemGap = 60;
 constexpr int elemStartX = 900;
 constexpr int elemStartY = selectedElemY - static_cast<int>(elemH * ((elemNum/2) + 0.5)) - elemGap * (elemNum/2);
 
+constexpr int selectedStartY = 400;
+constexpr int selectedH = 200;
+constexpr Color SelectedColor(0, 255, 250, 200);
+
 constexpr int levelStartX = 50;
 constexpr int levelStartY = 750;
 constexpr int levelGap = 50;
 constexpr int levelW = 200;
-constexpr Color levelBackgroundColor = Color(180);
+constexpr Color levelBackgroundColor(180);
 constexpr int levelFrameLength = 50;
 constexpr int levelFrameThickness = 3;
-constexpr Color levelFrameColor = Color(80, 180, 210);
+constexpr Color levelFrameColor(0, 255, 250);
 constexpr Color levelFontColor = Color(40);
 
 constexpr int jacketSize = 450;
@@ -23,17 +27,18 @@ constexpr int jacketStartY = 225;
 constexpr int jacketFrameLength = 50;
 constexpr int jacketFrameThickness = 5;
 constexpr int jacketFrameGap = 20;
-constexpr Color jacketFrameColor = Color(80, 180, 210);
+constexpr Color jacketFrameColor(0, 255, 250);
 
 constexpr int playerStartX = 25;
 constexpr int playerStartY = 25;
 constexpr int playerW = 400;
 constexpr int playerH = 150;
-constexpr Color playerBackgroundColor = Color(180, 180, 180);
+constexpr Color playerBackgroundColor(180, 180, 180);
 
 constexpr double moveDuration = 0.20;
 
 MusicSelection::MusicSelection(const InitData& init) : IScene(init), font30(30), font60(60), moveStatus(MoveStatus::NotMove) {
+  getData().drawBackground.random();
   getData().drawBackground.start();
   getData().drawGuide.set(std::vector<String>({U"←難易度",U"難易度→",U"選曲↓",U"選曲↑" }));
 }
@@ -80,6 +85,8 @@ void MusicSelection::draw() const {
   const auto info = getData().infos.at(getData().getSelected());
   double e = EaseInOutSine(moveSec / moveDuration);
   
+  Rect({0, selectedStartY}, {1920, selectedH }).draw(SelectedColor);
+
   // *** background ***
   getData().drawBackground.draw();
 
@@ -87,7 +94,7 @@ void MusicSelection::draw() const {
   Quad({0,0}, {elemStartX - 20,0}, {elemStartX - 70,1080}, {0,1080}).draw(Color(0,0,0,128));
 
   // *** player ***
-  Rect(playerStartX, playerStartY, playerW, playerH).draw(playerBackgroundColor);
+  //Rect(playerStartX, playerStartY, playerW, playerH).draw(playerBackgroundColor);
 
   // *** Jacket ***
   Rect(jacketStartX, jacketStartY, jacketSize, jacketSize)(TextureAsset(info.getAssetName())).draw();
@@ -103,11 +110,14 @@ void MusicSelection::draw() const {
 
   // *** Level ***
   for (int i = 0; i < info.getPlayLevels().size(); ++i) {
-    Quad({ levelStartX + i * (levelGap + levelW)         , levelStartY + levelW / 2 }, { levelStartX + i * (levelGap + levelW) + levelW / 2, levelStartY },
-         { levelStartX + i * (levelGap + levelW) + levelW, levelStartY + levelW / 2 }, { levelStartX + i * (levelGap + levelW) + levelW / 2, levelStartY + levelW })
-      .draw(levelBackgroundColor);
+    if (info.getPlayLevels().at(i) != 0) {
+      Quad({ levelStartX + i * (levelGap + levelW)         , levelStartY + levelW / 2 }, { levelStartX + i * (levelGap + levelW) + levelW / 2, levelStartY },
+        { levelStartX + i * (levelGap + levelW) + levelW, levelStartY + levelW / 2 }, { levelStartX + i * (levelGap + levelW) + levelW / 2, levelStartY + levelW })
+        .draw(levelBackgroundColor);
 
-    font60(info.getPlayLevels().at(i)).drawAt({ levelStartX + i * (levelGap + levelW) + levelW / 2 , levelStartY + levelW / 2.0 }, levelFontColor);
+      font60(info.getPlayLevels().at(i)).drawAt({ levelStartX + i * (levelGap + levelW) + levelW / 2 , levelStartY + levelW / 2.0 }, levelFontColor);
+    }
+    
 
     //Frame Lines
     if (i == getData().getLevelNum()) {
@@ -165,9 +175,9 @@ void MusicSelection::drawFadeOut(double t) const {
 }
 
 void MusicSelection::drawElem(int startX, int startY, MusicInfo& info) const{
-  Rect(startX,startY,1920-startX,elemH).drawFrame();
-  font60(info.getTitle()).draw(startX, startY);
-  font30(info.getArtist()).draw(startX, startY + 80);
-  font30(info.getBpm()).draw(startX, startY + 120);
+  Rect(startX,startY,1920-startX,elemH)(TextureAsset(U"elem")).draw();
+  font60(info.getTitle()).draw(startX + 50, startY + 20);
+  font30(U"BPM:" + info.getBpm()).draw(startX + 40, startY + 120);
+  font30(info.getArtist()).draw(startX + 300, startY + 120);
 
 }

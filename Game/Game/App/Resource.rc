@@ -62,6 +62,7 @@ Resource(laneEffect.png)
 Resource(perfect.png)
 Resource(good.png)
 Resource(miss.png)
+Resource(elem.png)
 
 
 /* 
