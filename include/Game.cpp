@@ -436,7 +436,14 @@ void Game::drawNotes() const {
 }
 
 void Game::drawNormalNote(const NoteData& note) const {
-  getNoteQuad(note.lane, note.second).draw((note.lane == 0 || note.lane == 5) ? Color(0, 255, 0) : Color(255, 255, 255));
+  Quad noteQuad = getNoteQuad(note.lane, note.second);
+  noteQuad.draw((note.lane == 0 || note.lane == 5) ? Color(0, 255, 0) : Color(255, 255, 255));
+
+  if (note.lane == 0) {
+    Triangle({ getNoteStartX(noteQuad.p0.y - getNoteHeight(note.second) * 8.0 ,0), noteQuad.p0.y - getNoteHeight(note.second) * 8.0 }, noteQuad.p3, { noteQuad.p3.x - getNoteHeight(note.second) * 8.0,noteQuad.p3.y }).draw(Color(0, 255, 0));
+  }else if(note.lane == 5) {
+    Triangle({ getNoteEndX(noteQuad.p1.y - getNoteHeight(note.second) * 8.0 ,5), noteQuad.p1.y - getNoteHeight(note.second) * 8.0 }, noteQuad.p2, { noteQuad.p2.x + getNoteHeight(note.second) * 8.0,noteQuad.p2.y }).draw(Color(0, 255, 0));
+  }
 }
 
 void Game::drawLongNote(const NoteData& note) const {
@@ -515,9 +522,9 @@ int Game::getNoteY(double t) const {
   return  static_cast<int>(convertRange(0,1, noteYFunc(arg),upY,bottomY));
 }
 
-int Game::getNoteHeight(double t) const {
+double Game::getNoteHeight(double t) const {
   double arg = (rhythmManager.getSecond() + toJudgeLineNoteSpeed - t) / toBottomNoteSpeed;
-  return  static_cast<int>(convertRange(0, 1, noteYFunc(arg), startNoteH, endNoteH));
+  return  convertRange(0, 1, noteYFunc(arg), startNoteH, endNoteH);
 }
 
 int Game::getNoteStartX(int y, int lane) const {

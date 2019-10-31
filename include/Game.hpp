@@ -40,7 +40,7 @@ private:
   Quad getNoteQuad(int lane, double second) const;
   Quad getLongQuad(const NoteData& note) const;
   int getNoteY(double t) const;
-  int getNoteHeight(double t) const;
+  double getNoteHeight(double t) const;
   int getNoteStartX(int y, int lane) const;
   int getNoteEndX(int y, int lane) const;
   NoteDrawStatus getNoteDrawStatus(double t)const;
