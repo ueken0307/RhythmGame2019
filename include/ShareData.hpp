@@ -50,7 +50,7 @@ public:
     selected = 0;
     levelNum = 0;
     levelFileName = { U"/easy.json",U"/normal.json",U"/hard.json" };
-    noteSpeed = 10;
+    noteSpeed = 0.8;
     judgeOffset = 0.0;
   };
 
