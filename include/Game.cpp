@@ -65,6 +65,9 @@ constexpr Rect musicStatus({musicStatusX, musicStatusY}, {musicStatusW, musicSta
 constexpr Rect musicStatusJacket({musicStatusJacketX, musicStatusJacketY}, {musicStatusJacketSize, musicStatusJacketSize});
 constexpr Color musicStatusColor(40, 128), musicStatusFrameColor(20);
 
+//*** beforeStart ***
+constexpr int beforeStartSec = 3;
+constexpr Rect beforeStart({0, 400}, {1920, 200});
 
 struct JudgeStrEffect : IEffect {
   int lane;
@@ -109,7 +112,7 @@ double calcJudgeLineValue(double start, double end) {
     (calcJudgeLineValue(start, x));
 }
 
-Game::Game(const InitData& init) : IScene(init), font(20), isStart(false), isMusicStarted(false) {
+Game::Game(const InitData& init) : IScene(init), font(20), font100(100), isStart(false), isMusicStarted(false) {
   JSONReader reader(getData().getScoreFileName());
   DEBUG_PRINTF("%s",getData().getScoreFileName().narrow().c_str());
   if (!reader) {
@@ -202,6 +205,8 @@ Game::Game(const InitData& init) : IScene(init), font(20), isStart(false), isMus
   toBottomNoteSpeed = toJudgeLineNoteSpeed /calcJudgeLineValue(0, 1);
 
   getData().drawBackground.random();
+
+  stopwatch.restart();
 }
 
 
@@ -210,6 +215,11 @@ void Game::update() {
 
   if (isStart) {
     rhythmManager.update();
+
+    if (isMusicStarted && !AudioAsset(getData().getSelectedInfo().getAssetName()).isPlaying()) {
+      AudioAsset::Release(getData().getSelectedInfo().getAssetName());
+      this->changeScene(State::Result);
+    }
 
     if (!isMusicStarted && rhythmManager.getSecond() >= rhythmManager.getMusicStartSec()) {
       isMusicStarted = true;
@@ -231,7 +241,8 @@ void Game::update() {
     }*/
 
   } else {
-    if (KeySpace.pressed()) {
+    if (stopwatch.s() > beforeStartSec) {
+      stopwatch.reset();
       isStart = true;
       rhythmManager.start();
 
@@ -440,6 +451,11 @@ void Game::draw() const {
   drawNotes();
 
   effect.update();
+
+  if (!isStart) {
+    beforeStart.draw(Color(0, 128));
+    font100((beforeStartSec - stopwatch.s() == 0)? U"Start!!" : ToString(beforeStartSec - stopwatch.s())).drawAt(beforeStart.x + beforeStart.w/2, beforeStart.y + beforeStart.h/2);
+  }
 }
 
 void Game::drawLaneEffect() const {

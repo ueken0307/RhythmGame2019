@@ -44,9 +44,10 @@ private:
   NoteDrawStatus getNoteDrawStatus(double t)const;
 
 
-  Font font;
+  Font font,font100;
   Texture laneEffect;
   Effect effect;
+  Stopwatch stopwatch;
   bool isStart, isMusicStarted;
   std::array<Line,5> vLines; //vertical lines
   double toJudgeLineNoteSpeed;
