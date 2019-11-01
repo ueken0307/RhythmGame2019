@@ -48,8 +48,9 @@ constexpr int laneEffectLength = 500;
 
 //*** Judge Effect ***
 constexpr double judgeEffectSecond = 0.25;
-constexpr int judgeEffectStartY = judgeLineY - 100;
+constexpr int judgeEffectStartY = 400;
 constexpr int judgeEffectDstY = judgeEffectStartY - 100;
+constexpr int judgeEffectW = convertRange(upY,bottomY,judgeEffectStartY,upW,bottomW);
 
 //*** MusicStatus ***
 constexpr int musicStatusX = 0;
@@ -75,9 +76,9 @@ struct JudgeStrEffect : IEffect {
 
   bool update(double t) override {
     if (1 <= lane && lane <= 4) {
-      double cX = (centerX - (judgeLineW / 2) + judgeLineW/8) + (lane-1)*(judgeLineW / 4);
+      double cX = (centerX - (judgeEffectW / 2) + judgeEffectW /8) + (lane-1)*(judgeEffectW / 4);
       double cY = judgeEffectStartY + (judgeEffectDstY - judgeEffectStartY) * (t/judgeEffectSecond);
-      TextureAsset(judgeAssetName).scaled(0.25).drawAt(cX, cY);
+      TextureAsset(judgeAssetName).scaled(0.3).drawAt(cX, cY);
     }
     return t < judgeEffectSecond;
   }
