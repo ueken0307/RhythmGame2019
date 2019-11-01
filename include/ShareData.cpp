@@ -118,11 +118,11 @@ double ShareData::getNoteSpeed() {
 };
 
 void ShareData::incNoteSpeed() {
-  noteSpeed += 0.1;
+  noteSpeed += 0.05;
 }
 
 void ShareData::decNoteSpeed() {
-  if (noteSpeed > 0.2) noteSpeed -= 0.1;
+  if (noteSpeed > 0.1) noteSpeed -= 0.05;
 }
 
 double ShareData::getJudgeOffset() {
