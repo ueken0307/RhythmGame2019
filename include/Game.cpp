@@ -195,10 +195,14 @@ Game::Game(const InitData& init) : IScene(init), font(20), isStart(false), isMus
   
   toJudgeLineNoteSpeed = getData().getNoteSpeed();
   toBottomNoteSpeed = toJudgeLineNoteSpeed /calcJudgeLineValue(0, 1);
+
+  getData().drawBackground.random();
 }
 
 
 void Game::update() {
+  getData().drawBackground.update();
+
   if (isStart) {
     rhythmManager.update();
 
@@ -414,6 +418,7 @@ void Game::excludeEndedNote() {
 
 
 void Game::draw() const {
+  getData().drawBackground.draw();
 
   musicStatus.draw(musicStatusColor).drawFrame(musicStatusFrameThickness, musicStatusFrameColor);
   musicStatusJacket(TextureAsset(getData().getSelectedInfo().getAssetName())).draw();
