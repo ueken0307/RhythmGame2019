@@ -74,7 +74,7 @@ public:
   double getTotalOffset();
   String getScoreFileName();
   MusicInfo& getSelectedInfo();
-  MusicInfo& getInfoFromSelected(size_t offset);
+  MusicInfo& getInfoFromSelected(int offset);
 
 
   std::vector<MusicInfo> infos;

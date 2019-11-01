@@ -149,8 +149,8 @@ MusicInfo& ShareData::getSelectedInfo() {
   return infos.at(selected);
 }
 
-MusicInfo& ShareData::getInfoFromSelected(size_t offset) {
-  size_t index = selected + offset;
+MusicInfo& ShareData::getInfoFromSelected(int offset) {
+  int index = static_cast<int>(selected) + offset;
 
   if (index < 0) {
     index += infos.size();
