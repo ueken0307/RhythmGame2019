@@ -96,11 +96,11 @@ void AdjustSpeed::draw() const {
   leftLine.draw(2.0);
   rightLine.draw(2.0);
 
-  font60(U"スピード  :  " + ToString(getData().getNoteSpeed())).drawAt(600, 200);
-  font30(U"ノーツが見え始めてから判定ラインに到達するまでの秒[s]").drawAt(600, 250);
+  font60(U"スピード  :  " + ToString(getData().getNoteSpeed())).drawAt(600, 300);
+  font30(U"ノーツが見え始めてから判定ラインに到達するまでの秒[s]").drawAt(600, 350);
 
-  font60(U"判定タイミング  :  " + ToString(getData().getJudgeOffset())).drawAt(600, 400);
-  font30(U"LATEが多く出る場合はマイナスの値に、FASTが多く出る場合は正の値に調整する。 ").drawAt(600, 450);
+  font60(U"判定タイミング  :  " + ToString(getData().getJudgeOffset())).drawAt(600, 500);
+  font30(U"LATEが多く出る場合はマイナスの値に、FASTが多く出る場合は正の値に調整する。 ").drawAt(600, 550);
 
   getData().drawGuide.draw();
 }
