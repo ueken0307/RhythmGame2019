@@ -17,8 +17,6 @@ public:
 
   void update() override;
   void draw() const override;
-  void drawFadeIn(double t) const override;
-  void drawFadeOut(double t) const override;
 
 private:
   Font font;

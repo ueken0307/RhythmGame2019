@@ -91,11 +91,3 @@ void Load::draw() const {
   }
 
 }
-
-void Load::drawFadeIn(double t) const {
-  draw();
-}
-
-void Load::drawFadeOut(double t) const {
-  draw();
-}

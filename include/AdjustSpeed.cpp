@@ -104,11 +104,3 @@ void AdjustSpeed::draw() const {
 
   getData().drawGuide.draw();
 }
-
-void AdjustSpeed::drawFadeIn(double t) const {
-  draw();
-}
-
-void AdjustSpeed::drawFadeOut(double t) const {
-  draw();
-}

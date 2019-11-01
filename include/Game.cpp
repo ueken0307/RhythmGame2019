@@ -442,14 +442,6 @@ void Game::draw() const {
   effect.update();
 }
 
-void Game::drawFadeIn(double t) const {
-  draw();
-}
-
-void Game::drawFadeOut(double t) const {
-  draw();
-}
-
 void Game::drawLaneEffect() const {
   for (size_t i = 0; i < laneKeys.size(); ++i) {
     if (laneKeys.at(i).pressed()) {

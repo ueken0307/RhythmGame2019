@@ -35,6 +35,7 @@ void Main() {
     .add<AdjustSpeed>(State::AdjustSpeed)
     .add<Game>(State::Game)
     .add<Result>(State::Result);
+  sm.setFadeColor(Color(100));
   //----------  
   JSONReader reader(U"config.json");
   if (!reader) {

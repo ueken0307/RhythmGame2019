@@ -113,11 +113,3 @@ void Result::draw() const {
   judgeRankElem.draw(judgeRankColor);
   font100(getJudgeRank(getData().result.getTotalPer())).drawAt(elemCenterX, elemCenterY, Palette::Yellow);
 }
-
-void Result::drawFadeIn(double t) const {
-  draw();
-}
-
-void Result::drawFadeOut(double t) const {
-  draw();
-}

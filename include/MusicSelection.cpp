@@ -166,13 +166,6 @@ void MusicSelection::draw() const {
   getData().drawGuide.draw();
 }
 
-void MusicSelection::drawFadeIn(double t) const {
-  draw();
-}
-
-void MusicSelection::drawFadeOut(double t) const {
-  draw();
-}
 
 void MusicSelection::drawElem(int startX, int startY, MusicInfo& info) const{
   Rect(startX,startY,1920-startX,elemH)(TextureAsset(U"elem")).draw();
