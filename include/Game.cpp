@@ -41,6 +41,7 @@ constexpr Color LNHalfwayMissColor(40, 100, 100); //ÉçÉìÉOÉmÅ[ÉcÇÃìríÜÇÃîªíËé∏îs
 
 //slide
 constexpr int arrowNum = 5;
+constexpr Color slideNoteColor(40, 220, 40, 60), slideArrowColor(40, 220, 40, 160);
 
 //*** Lane Effect ***
 constexpr int laneEffectLength = 500;
@@ -483,7 +484,7 @@ void Game::drawLaneEffect() const {
 }
 
 void Game::drawNotes() const {
-  for (const auto& laneNotes : { allNotes.at(0), allNotes.at(5) ,allNotes.at(1) ,allNotes.at(2) ,allNotes.at(3) ,allNotes.at(4) }) {
+  for (const auto& laneNotes : { allNotes.at(1) ,allNotes.at(2) ,allNotes.at(3) ,allNotes.at(4), allNotes.at(0), allNotes.at(5) }) {
     for (const auto& note : laneNotes) {
       if (note.isVisible) {
         if (getNoteDrawStatus(note.second) != NoteDrawStatus::before) {
@@ -503,7 +504,7 @@ void Game::drawNotes() const {
 
 void Game::drawNormalNote(const NoteData& note) const {
   Quad noteQuad = getNoteQuad(note.lane, note.second);
-  noteQuad.draw((note.lane == 0 || note.lane == 5) ? Color(0, 255, 0) : Color(255, 255, 255)).drawFrame(noteFrameThickness, noteFrameColor);
+  noteQuad.draw((note.lane == 0 || note.lane == 5) ? slideNoteColor : Color(255, 255, 255)).drawFrame(noteFrameThickness, noteFrameColor);
 
   double noteUpW = noteQuad.p1.x - noteQuad.p0.x;
   double arrowGap = noteUpW / (arrowNum * 2);
@@ -513,13 +514,13 @@ void Game::drawNormalNote(const NoteData& note) const {
   if (note.lane == 0) {
     for (int i = 0; i < arrowNum; ++i) {
       Triangle({noteQuad.p0.x + i * (arrowGap + arrowW), noteQuad.p0.y - (arrowH / 2)}, { noteQuad.p0.x + i * (arrowGap + arrowW) + arrowW , noteQuad.p0.y - arrowH },
-        { noteQuad.p0.x + i * (arrowGap + arrowW) + arrowW , noteQuad.p0.y }).draw(Color(0, 255, 0)).drawFrame(noteFrameThickness, noteFrameColor);;
+        { noteQuad.p0.x + i * (arrowGap + arrowW) + arrowW , noteQuad.p0.y }).draw(slideArrowColor).drawFrame(noteFrameThickness, noteFrameColor);;
     }
     //Triangle({ getNoteStartX(noteQuad.p0.y - getNoteHeight(note.second) * 8.0 ,0), noteQuad.p0.y - getNoteHeight(note.second) * 8.0 }, noteQuad.p3, { noteQuad.p3.x - getNoteHeight(note.second) * 8.0,noteQuad.p3.y }).draw(Color(0, 255, 0));
   }else if(note.lane == 5) {
     for (int i = 0; i < arrowNum; ++i) {
       Triangle({ noteQuad.p1.x - i * (arrowGap + arrowW), noteQuad.p0.y - (arrowH / 2) }, { noteQuad.p1.x - i * (arrowGap + arrowW) - arrowW , noteQuad.p0.y - arrowH },
-        { noteQuad.p1.x - i * (arrowGap + arrowW) - arrowW , noteQuad.p0.y }).draw(Color(0, 255, 0)).drawFrame(noteFrameThickness, noteFrameColor);;
+        { noteQuad.p1.x - i * (arrowGap + arrowW) - arrowW , noteQuad.p0.y }).draw(slideArrowColor).drawFrame(noteFrameThickness, noteFrameColor);;
     }
     //Triangle({ getNoteEndX(noteQuad.p1.y - getNoteHeight(note.second) * 8.0 ,5), noteQuad.p1.y - getNoteHeight(note.second) * 8.0 }, noteQuad.p2, { noteQuad.p2.x + getNoteHeight(note.second) * 8.0,noteQuad.p2.y }).draw(Color(0, 255, 0));
   }
