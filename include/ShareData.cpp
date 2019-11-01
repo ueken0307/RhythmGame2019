@@ -54,6 +54,10 @@ double ResultData::getNowPer() {
   return sum / noteNum;
 }
 
+int ResultData::getCombo() {
+  return combo;
+}
+
 int ResultData::getMaxCombo() {
   return maxCombo;
 }

@@ -44,7 +44,7 @@ private:
   NoteDrawStatus getNoteDrawStatus(double t)const;
 
 
-  Font font,font100;
+  Font font, font60, font100;
   Texture laneEffect;
   Effect effect;
   Stopwatch stopwatch;

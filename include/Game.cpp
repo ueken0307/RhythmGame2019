@@ -69,6 +69,10 @@ constexpr Color musicStatusColor(40, 128), musicStatusFrameColor(20);
 constexpr int beforeStartSec = 3;
 constexpr Rect beforeStart({0, 400}, {1920, 200});
 
+//*** combo ***
+constexpr int comboCenterY = 400;
+constexpr Color comboColor(220,220,60);
+
 struct JudgeStrEffect : IEffect {
   int lane;
   String judgeAssetName;
@@ -112,7 +116,7 @@ double calcJudgeLineValue(double start, double end) {
     (calcJudgeLineValue(start, x));
 }
 
-Game::Game(const InitData& init) : IScene(init), font(20), font100(100), isStart(false), isMusicStarted(false) {
+Game::Game(const InitData& init) : IScene(init), font(20), font60(60), font100(100), isStart(false), isMusicStarted(false) {
   JSONReader reader(getData().getScoreFileName());
   DEBUG_PRINTF("%s",getData().getScoreFileName().narrow().c_str());
   if (!reader) {
@@ -457,6 +461,8 @@ void Game::draw() const {
   drawNotes();
 
   effect.update();
+
+  font60(ToString(getData().result.getCombo())).drawAt(centerX, comboCenterY, comboColor);
 
   if (!isStart) {
     beforeStart.draw(Color(0, 128));

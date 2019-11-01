@@ -35,6 +35,7 @@ public:
   void incJudge(size_t judgeIndex, double timing);
   double getTotalPer();
   double getNowPer();
+  int getCombo();
   int getMaxCombo();
   int getJudgeCounts(size_t judgeIndex);
   int getMissCounts();
