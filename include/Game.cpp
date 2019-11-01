@@ -180,9 +180,11 @@ Game::Game(const InitData& init) : IScene(init), font(20), font100(100), isStart
   AudioAsset::Preload(getData().getSelectedInfo().getAssetName());
   AudioAsset(getData().getSelectedInfo().getAssetName()).setLoop(false);
   AudioAsset(getData().getSelectedInfo().getAssetName()).setPosSec(rhythmManager.getMusicInitPos());
+  AudioAsset(getData().getSelectedInfo().getAssetName()).setVolume(0.7);
 
   //タップ音のロード
   AudioAsset::Preload(U"tap");
+  AudioAsset(U"tap").setVolume(1.0);
 
   //エフェクト画像のプリロード
   for (const auto& judge : judges) {
@@ -304,6 +306,8 @@ void Game::judgeNormal(NoteData& note) {
       effect.add<JudgeStrEffect>(note.lane,judges.at(i).name);
       note.isJudgeEnded = true;
       note.isVisible = false;
+      AudioAsset(U"tap").stop();
+      AudioAsset(U"tap").play();
       break;
     }
   }
@@ -320,6 +324,8 @@ void Game::judgeLong(NoteData& note, bool beforeKeyStatus) {
         effect.add<JudgeStrEffect>(note.lane, judges.at(i).name);
         note.inLong = true;
         note.beforeJudgeResult = true;
+        AudioAsset(U"tap").stop();
+        AudioAsset(U"tap").play();
         break;
       }
     }
