@@ -19,6 +19,13 @@ public:
 extern Judge miss;
 extern std::array<Judge, JUDGE_NUM> judges;
 
+struct JudgeTiming {
+  JudgeTiming(int fast, int slow, double ave) : fast(fast), slow(slow), ave(ave) {};
+  int fast;
+  int slow;
+  double ave;
+};
+
 class ResultData {
 public:
   ResultData() { reset(1); };
@@ -30,8 +37,9 @@ public:
   double getNowPer();
   int getMaxCombo();
   int getJudgeCounts(size_t judgeIndex);
-  std::vector<double>& getJudgeTimings(size_t judgeIndex);
   int getMissCounts();
+  JudgeTiming getJudgeTiming(size_t judgeIndex);
+  JudgeTiming getAllJudgeTiming();
 
 private:
   int totalNotes;

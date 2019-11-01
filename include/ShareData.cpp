@@ -12,6 +12,9 @@ void ResultData::reset(int totalNotes) {
   combo = 0;
   maxCombo = 0;
   missCounts = 0;
+  for (auto& tmp : judgeTimings) {
+    tmp.clear();
+  }
   judgeCounts.fill(0);
 };
 
@@ -59,12 +62,46 @@ int ResultData::getJudgeCounts(size_t judgeIndex) {
   return judgeCounts.at(judgeIndex);
 }
 
-std::vector<double>& ResultData::getJudgeTimings(size_t judgeIndex) {
-  return judgeTimings.at(judgeIndex);
-}
-
 int ResultData::getMissCounts() {
   return missCounts;
+}
+
+JudgeTiming ResultData::getJudgeTiming(size_t judgeIndex) {
+  JudgeTiming res(0,0,0.0);
+  for (const auto& timing : judgeTimings.at(judgeIndex)) {
+    if (timing < 0) {
+      res.fast++;
+    } else if (timing > 0) {
+      res.slow++;
+    }
+    res.ave += timing;
+  }
+
+  if (res.fast + res.slow > 0) {
+    res.ave /= res.fast + res.slow;
+  }
+
+  return res;
+}
+
+JudgeTiming ResultData::getAllJudgeTiming() {
+  JudgeTiming res(0, 0, 0.0);
+  for (const auto& judgeTiming : judgeTimings) {
+    for (const auto& timing : judgeTiming) {
+      if (timing < 0.0) {
+        res.fast++;
+      } else if (timing > 0.0) {
+        res.slow++;
+      }
+      res.ave += timing;
+    }
+  }
+
+  if (res.fast + res.slow > 0) {
+    res.ave /= res.fast + res.slow;
+  }
+  
+  return res;
 }
 
 

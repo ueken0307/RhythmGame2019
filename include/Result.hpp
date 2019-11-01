@@ -16,7 +16,7 @@ public:
   void drawFadeOut(double t) const override;
 
 private:
-  Font font;
+  Font font40,font60,font100;
 };
 
 #endif // RESULT_HPP
