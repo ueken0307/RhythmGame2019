@@ -161,7 +161,8 @@ Game::Game(const InitData& init) : IScene(init), font(20), isStart(false), isMus
     for (const auto& note : laneNotes) {
       if (note.length != 0) {
         //èIì_ + ìríÜ
-        totalNotes += 1 + static_cast<int>(floor((note.endSecond - note.second) / longNoteJudgeDuration));
+        int longCounts = static_cast<int>(floor((note.endSecond - note.second) / longNoteJudgeDuration));
+        totalNotes += 1 + ((longCounts == 0)? 1 : longCounts);
       }
     }
   }
