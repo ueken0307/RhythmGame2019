@@ -471,7 +471,7 @@ void Game::drawLaneEffect() const {
         { getNoteStartX(judgeLineY - laneEffectLength, i),judgeLineY - laneEffectLength },
         { getNoteEndX(judgeLineY - laneEffectLength, i),judgeLineY - laneEffectLength },
         { getNoteEndX(judgeLineY,i),judgeLineY },
-        { getNoteStartX(judgeLineY,i),judgeLineY })(laneEffect).draw(Color(255,64));
+        { getNoteStartX(judgeLineY,i),judgeLineY })(laneEffect).draw((i == 0 || i == 5) ? Color(0, 255, 0, 64) : Color(255, 64));
     }
   }
 }
