@@ -48,7 +48,18 @@ constexpr double judgeEffectSecond = 0.25;
 constexpr int judgeEffectStartY = judgeLineY - 100;
 constexpr int judgeEffectDstY = judgeEffectStartY - 100;
 
-
+//*** MusicStatus ***
+constexpr int musicStatusX = 0;
+constexpr int musicStatusY = 50;
+constexpr int musicStatusW = 525;
+constexpr int musicStatusH = 175;
+constexpr int musicStatusFrameThickness = 4.0;
+constexpr int musicStatusJacketSize = 125;
+constexpr int musicStatusJacketY = musicStatusY + (musicStatusH - musicStatusJacketSize) / 2;
+constexpr int musicStatusJacketX = musicStatusX + (musicStatusH - musicStatusJacketSize) / 2;
+constexpr Rect musicStatus({musicStatusX, musicStatusY}, {musicStatusW, musicStatusH});
+constexpr Rect musicStatusJacket({musicStatusJacketX, musicStatusJacketY}, {musicStatusJacketSize, musicStatusJacketSize});
+constexpr Color musicStatusColor(40, 128), musicStatusFrameColor(20);
 
 
 struct JudgeStrEffect : IEffect {
@@ -94,7 +105,7 @@ double calcJudgeLineValue(double start, double end) {
     (calcJudgeLineValue(start, x));
 }
 
-Game::Game(const InitData& init) : IScene(init), font(30), isStart(false), isMusicStarted(false) {
+Game::Game(const InitData& init) : IScene(init), font(20), isStart(false), isMusicStarted(false) {
   JSONReader reader(getData().getScoreFileName());
   DEBUG_PRINTF("%s",getData().getScoreFileName().narrow().c_str());
   if (!reader) {
@@ -403,6 +414,12 @@ void Game::excludeEndedNote() {
 
 
 void Game::draw() const {
+
+  musicStatus.draw(musicStatusColor).drawFrame(musicStatusFrameThickness, musicStatusFrameColor);
+  musicStatusJacket(TextureAsset(getData().getSelectedInfo().getAssetName())).draw();
+  font(getData().getSelectedInfo().getTitle()).draw(musicStatusJacketX + musicStatusJacketSize + 10, musicStatusJacketY + 20);
+  font(getData().getSelectedInfo().getArtist()).draw(musicStatusJacketX + musicStatusJacketSize + 40, musicStatusJacketY + 70);
+
   laneBackQuad.draw(laneBackColor);
 
   for (const auto& i : vLines) { i.draw(laneLineThickness, laneLineColor); }
