@@ -71,7 +71,6 @@ Load::Load(const InitData& init) : IScene(init), font(20) {
   TextureAsset::Register(U"elem", Resource(U"elem.png"));
 
   TextureAsset::Register(U"howto", Resource(U"howto.png"));
-  TextureAsset::Register(U"thankyou", Resource(U"thankyou.png"));
 }
 
 void Load::update() {
