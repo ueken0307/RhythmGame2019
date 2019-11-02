@@ -52,6 +52,9 @@ constexpr double judgeEffectSecond = 0.25;
 constexpr int judgeEffectStartY = 400;
 constexpr int judgeEffectDstY = judgeEffectStartY - 100;
 constexpr int judgeEffectW = convertRange(upY,bottomY,judgeEffectStartY,upW,bottomW);
+constexpr int judgeEffectSideGap = 70;
+constexpr int judgeEffectSideLeftX = centerX - convertRange(upY, bottomY, judgeEffectStartY, upW, bottomW) / 2 - judgeEffectSideGap;
+constexpr int judgeEffectSideRightX = centerX + convertRange(upY, bottomY, judgeEffectStartY, upW, bottomW) / 2 + judgeEffectSideGap;
 
 //*** MusicStatus ***
 constexpr int musicStatusX = 0;
@@ -83,11 +86,15 @@ struct JudgeStrEffect : IEffect {
   }
 
   bool update(double t) override {
-    if (1 <= lane && lane <= 4) {
-      double cX = (centerX - (judgeEffectW / 2) + judgeEffectW /8) + (lane-1)*(judgeEffectW / 4);
-      double cY = judgeEffectStartY + (judgeEffectDstY - judgeEffectStartY) * (t/judgeEffectSecond);
-      TextureAsset(judgeAssetName).scaled(0.3).drawAt(cX, cY);
+    double cX = (centerX - (judgeEffectW / 2) + judgeEffectW /8) + (lane-1)*(judgeEffectW / 4);
+    double cY = judgeEffectStartY + (judgeEffectDstY - judgeEffectStartY) * (t/judgeEffectSecond);
+    if (lane == 0) {
+      cX = judgeEffectSideLeftX;
+    } else if (lane == 5) {
+      cX = judgeEffectSideRightX;
     }
+
+    TextureAsset(judgeAssetName).scaled(0.3).drawAt(cX, cY);
     return t < judgeEffectSecond;
   }
 };
