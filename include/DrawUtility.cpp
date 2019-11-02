@@ -115,12 +115,17 @@ void DrawGuide::set(std::vector<String> guideStrs) {
 
 void DrawGuide::draw() {
   Line({0,drawGuideStartY }, {sceneW, drawGuideStartY}).draw(drawGuideLineThickness, drawGuideLineColor);
+
   for (size_t i = 0; i < guideStrs.size(); ++i) {
+    bool isPressed = keys.at(i).pressed();
+    if (guideStrs.size() == 1) isPressed = (keys.at(0) | keys.at(1) | keys.at(2) | keys.at(3)).pressed();
+    if (guideStrs.size() == 2) isPressed = ((i == 0)? (keys.at(0) | keys.at(1)).pressed() : (keys.at(2) | keys.at(3)).pressed());
+
     Rect(i * (sceneW / guideStrs.size()), drawGuideStartY, sceneW / guideStrs.size(), sceneH - drawGuideStartY)
-      .draw((keys.at(i).pressed()) ? drawGuideActiveBackColor : ((i%2)? drawGuideBackColor1 : drawGuideBackColor2));
+      .draw((isPressed) ? drawGuideActiveBackColor : ((i%2)? drawGuideBackColor1 : drawGuideBackColor2));
 
     font(guideStrs.at(i)).drawAt((sceneW / guideStrs.size())/2 + i * (sceneW / guideStrs.size()),(sceneH + drawGuideStartY)/2,
-      (keys.at(i).pressed())? drawGuideActiveFontColor : drawGuideFontColor);
+      (isPressed)? drawGuideActiveFontColor : drawGuideFontColor);
   }
 
 }
