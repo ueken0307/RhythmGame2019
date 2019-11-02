@@ -1,7 +1,7 @@
 #include"AdjustSpeed.hpp"
 
 //*** Lane ***
-constexpr int centerX = 1500;
+constexpr int centerX = 400;
 constexpr int upY = 0;
 constexpr int bottomY = 1000;
 constexpr int upW = 60;
@@ -96,15 +96,16 @@ void AdjustSpeed::draw() const {
   leftLine.draw(2.0);
   rightLine.draw(2.0);
 
-  font60(U"スピード  :  " + ToString(getData().getNoteSpeed())).drawAt(600, 300);
-  font30(U"ノーツが見え始めてから判定ラインに到達するまでの秒[s]").drawAt(600, 350);
+  font60(U"スピード  :  " + ToString(getData().getNoteSpeed())).drawAt(1200, 300);
+  font30(U"ノーツが見え始めてから判定ラインに到達するまでの秒[s]").drawAt(1200, 350);
 
-  font60(U"判定タイミング  :  " + ToString(getData().getJudgeOffset())).drawAt(600, 500);
-  font30(U"LATEが多く出る場合はマイナスの値に、FASTが多く出る場合は正の値に調整する。 ").drawAt(600, 550);
+  font60(U"判定タイミング  :  " + ToString(getData().getJudgeOffset())).drawAt(1200, 500);
+  font30(U"LATEが多く出る場合はマイナスの値に、FASTが多く出る場合は正の値に調整する。 ").drawAt(1200, 550);
 
-  if (getData().getPlayNum() != 0) {
-    font30(U"前回のプレイからオススメの判定タイミング : " + ToString(-1 * getData().result.getAllJudgeTiming().ave)).drawAt(600, 700);
-  }
+  font30(((getData().getPlayNum() == 0)? 
+    (U"初めての場合は変えなくて大丈夫です") :
+    (U"前回のプレイからオススメの判定タイミング : " + ToString(-1 * getData().result.getAllJudgeTiming().ave)))).drawAt(1200, 600, Color(255,80,80));
+  
 
   getData().drawGuide.draw();
 }
