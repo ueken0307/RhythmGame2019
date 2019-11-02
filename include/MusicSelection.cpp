@@ -109,13 +109,14 @@ void MusicSelection::draw() const {
     { jacketStartX - jacketFrameGap + jacketFrameLength, jacketStartY + jacketSize + jacketFrameGap }).draw(jacketFrameThickness, jacketFrameColor);
 
   // *** Level ***
+  std::array<String, 3> levelStr({ U"‚©‚ñ‚½‚ñ", U"‚Ó‚Â‚¤", U"‚Þ‚¸‚©‚µ‚¢" });
   for (int i = 0; i < info.getPlayLevels().size(); ++i) {
     if (info.getPlayLevels().at(i) != 0) {
       Quad({ levelStartX + i * (levelGap + levelW)         , levelStartY + levelW / 2 }, { levelStartX + i * (levelGap + levelW) + levelW / 2, levelStartY },
         { levelStartX + i * (levelGap + levelW) + levelW, levelStartY + levelW / 2 }, { levelStartX + i * (levelGap + levelW) + levelW / 2, levelStartY + levelW })
         .draw(levelBackgroundColor);
 
-      font60(info.getPlayLevels().at(i)).drawAt({ levelStartX + i * (levelGap + levelW) + levelW / 2 , levelStartY + levelW / 2.0 }, levelFontColor);
+      font30(levelStr.at(i)).drawAt({ levelStartX + i * (levelGap + levelW) + levelW / 2 , levelStartY + levelW / 2.0 }, levelFontColor);
     }
     
 
