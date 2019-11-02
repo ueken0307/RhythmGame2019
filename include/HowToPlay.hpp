@@ -7,20 +7,19 @@
 class HowToPlay :public SceneManager<State, ShareData>::Scene {
 public:
   HowToPlay(const InitData& init) : IScene(init) {
-    getData().drawBackground.random();
+    getData().drawGuide.set(std::vector<String>({U"いずれかのボタンを押してスタート"}));
   }
 
   void update() override {
-    getData().drawBackground.update();
 
-    if (KeyEnter.down()) {
+    if ((KeyEnter | KeyD | KeyF | KeyJ | KeyK).down()) {
       changeScene(State::MusicSelection);
     }
   }
 
   void draw() const override {
-    //getData().drawBackground.draw();
     TextureAsset(U"howto").draw(0, 0);
+    getData().drawGuide.draw();
   }
 
 };
