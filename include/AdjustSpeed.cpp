@@ -102,5 +102,9 @@ void AdjustSpeed::draw() const {
   font60(U"判定タイミング  :  " + ToString(getData().getJudgeOffset())).drawAt(600, 500);
   font30(U"LATEが多く出る場合はマイナスの値に、FASTが多く出る場合は正の値に調整する。 ").drawAt(600, 550);
 
+  if (getData().getPlayNum() != 0) {
+    font30(U"前回のプレイからオススメの判定タイミング : " + ToString(-1 * getData().result.getAllJudgeTiming().ave)).drawAt(600, 700);
+  }
+
   getData().drawGuide.draw();
 }
