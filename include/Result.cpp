@@ -9,7 +9,7 @@ constexpr Rect jacket({ jacketCenterX - jacketSize / 2, jacketCenterY - jacketSi
 
 constexpr int elemSize = 600;
 constexpr int elemCenterX = 1400;
-constexpr int elemCenterY = 1080/2;
+constexpr int elemCenterY = 1000/2;
 constexpr double elemFrameThickness = 3.0;
 constexpr Color elemColor1(40), elemColor2(80);
 constexpr std::array<Color, 2> judgeColors({ Color(220, 50, 50), Color(50, 220, 50) });
@@ -70,15 +70,16 @@ String getJudgeRank(double per) {
 
 
 Result::Result(const InitData& init) : IScene(init), font40(40) , font60(60) , font100(100){
+  getData().incPlayNum();
   getData().drawBackground.random();
+  getData().drawGuide.set(std::vector<String>({((getData().getPlayNum() < getData().getMaxPlayNum())? U"いずれかのボタンを押して続ける" : U"いずれかのボタンを押して終わる")}));
 }
 
 
 void Result::update() {
   getData().drawBackground.update();
 
-  if (KeyEnter.pressed()) {
-    getData().incPlayNum();
+  if ((KeyEnter | KeyD | KeyF | KeyJ | KeyK).down()) {
     this->changeScene((getData().getPlayNum() < getData().getMaxPlayNum()) ? State::MusicSelection : State::ThankYou);
   }
 }
@@ -113,4 +114,6 @@ void Result::draw() const {
 
   judgeRankElem.draw(judgeRankColor);
   font100(getJudgeRank(getData().result.getTotalPer())).drawAt(elemCenterX, elemCenterY, Palette::Yellow);
+
+  getData().drawGuide.draw();
 }
