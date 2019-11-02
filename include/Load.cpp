@@ -71,25 +71,28 @@ Load::Load(const InitData& init) : IScene(init), font(20) {
   TextureAsset::Register(U"elem", Resource(U"elem.png"));
 
   TextureAsset::Register(U"howto", Resource(U"howto.png"));
+
+  getData().drawGuide.set(std::vector<String>({ U"いずれかのボタンを押してスタート" }));
 }
 
 void Load::update() {
-  if (KeyEnter.pressed()) {
-    this->changeScene(State::Title);
+  if ((KeyEnter | KeyD | KeyF | KeyJ | KeyK).down()) {
+    changeScene(State::Title);
   }
 }
 
 void Load::draw() const {
-  font(ToString(getData().infos.size()) + U"曲の読み込みに成功").draw(0,0, Color(40, 200, 40));
+  font(ToString(getData().infos.size()) + U"曲の読み込みに成功").draw(0,0, Color(100, 200, 100));
 
   if (!failList.empty()) {
     int start = 25;
-    font(ToString(failList.size()) + U"曲の読み込みに失敗").draw(0, start, Color(200, 40, 40));
+    font(ToString(failList.size()) + U"曲の読み込みに失敗").draw(0, start, Color(200, 100, 100));
 
     for (const auto &i : failList) {
       start += 20;
-      font(i).draw(20, start, Color(200, 40, 40));
+      font(i).draw(20, start, Color(200, 100, 100));
     }
   }
 
+  getData().drawGuide.draw();
 }
