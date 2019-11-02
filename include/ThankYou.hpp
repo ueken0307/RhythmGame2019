@@ -15,7 +15,7 @@ public:
   void update() override {
     getData().drawBackground.update();
 
-    if (stopwatch.sF() > 5.0 || KeyEnter.pressed()) {
+    if (stopwatch.sF() > 5.0 || (KeyEnter | KeyD | KeyF | KeyJ | KeyK).down()) {
       changeScene(State::Title);
     }
   }
