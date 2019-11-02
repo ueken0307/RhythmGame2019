@@ -3,6 +3,9 @@
 
 enum class State{
   Load,
+  Title,
+  HowToPlay,
+  ThankYou,
   MusicSelection,
   AdjustSpeed,
   Game,

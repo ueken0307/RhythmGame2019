@@ -56,12 +56,18 @@ class ShareData {
 
 public:
   ShareData() {
+    reset();
+  };
+
+  void reset() {
+    playNum = 0;
+
     selected = 0;
     levelNum = 0;
     levelFileName = { U"/easy.json",U"/normal.json",U"/hard.json" };
     noteSpeed = 0.8;
     judgeOffset = 0.0;
-  };
+  }
 
   void setMusicFolderPath(String path);
   String getMusicFolderPath();
@@ -85,6 +91,10 @@ public:
   MusicInfo& getSelectedInfo();
   MusicInfo& getInfoFromSelected(int offset);
 
+  int getMaxPlayNum();
+  int getPlayNum();
+  void incPlayNum();
+
 
   std::vector<MusicInfo> infos;
   std::array<String, 3> levelFileName;
@@ -99,6 +109,7 @@ private:
   size_t selected, levelNum;
   double noteSpeed;
   double judgeOffset;
+  int playNum;
 
 };
 

@@ -6,10 +6,13 @@
 #include "State.hpp"
 
 #include "Load.hpp"
+#include "Title.hpp"
+#include "HowToPlay.hpp"
 #include "MusicSelection.hpp"
 #include "AdjustSpeed.hpp"
 #include "Game.hpp"
 #include "Result.hpp"
+#include "ThankYou.hpp"
 
 void Main() {
 
@@ -31,10 +34,14 @@ void Main() {
   SceneManager<State, ShareData> sm;
   sm
     .add<Load>(State::Load)
+    .add<Title>(State::Title)
+    .add<HowToPlay>(State::HowToPlay)
     .add<MusicSelection>(State::MusicSelection)
     .add<AdjustSpeed>(State::AdjustSpeed)
     .add<Game>(State::Game)
-    .add<Result>(State::Result);
+    .add<Result>(State::Result)
+    .add<ThankYou>(State::ThankYou);
+
   sm.setFadeColor(Color(100));
   //----------  
   JSONReader reader(U"config.json");

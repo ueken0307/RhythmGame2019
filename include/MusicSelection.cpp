@@ -95,6 +95,7 @@ void MusicSelection::draw() const {
 
   // *** player ***
   //Rect(playerStartX, playerStartY, playerW, playerH).draw(playerBackgroundColor);
+  font60(ToString(getData().getPlayNum() + 1) + U"‹È–Ú").draw(playerStartX,playerStartY);
 
   // *** Jacket ***
   Rect(jacketStartX, jacketStartY, jacketSize, jacketSize)(TextureAsset(info.getAssetName())).draw();

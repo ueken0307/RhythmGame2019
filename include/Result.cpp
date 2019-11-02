@@ -78,7 +78,8 @@ void Result::update() {
   getData().drawBackground.update();
 
   if (KeyEnter.pressed()) {
-    this->changeScene(State::MusicSelection);
+    getData().incPlayNum();
+    this->changeScene((getData().getPlayNum() < getData().getMaxPlayNum()) ? State::MusicSelection : State::ThankYou);
   }
 }
 

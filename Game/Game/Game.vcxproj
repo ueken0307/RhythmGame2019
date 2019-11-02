@@ -245,6 +245,7 @@
     <ClInclude Include="..\..\include\AdjustSpeed.hpp" />
     <ClInclude Include="..\..\include\DrawUtility.hpp" />
     <ClInclude Include="..\..\include\Game.hpp" />
+    <ClInclude Include="..\..\include\HowToPlay.hpp" />
     <ClInclude Include="..\..\include\Load.hpp" />
     <ClInclude Include="..\..\include\MusicInfo.hpp" />
     <ClInclude Include="..\..\include\MusicSelection.hpp" />
@@ -253,7 +254,9 @@
     <ClInclude Include="..\..\include\RhythmManager.hpp" />
     <ClInclude Include="..\..\include\ShareData.hpp" />
     <ClInclude Include="..\..\include\State.hpp" />
+    <ClInclude Include="..\..\include\ThankYou.hpp" />
     <ClInclude Include="..\..\include\TimeManager.hpp" />
+    <ClInclude Include="..\..\include\Title.hpp" />
     <ClInclude Include="..\..\include\Utility.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
