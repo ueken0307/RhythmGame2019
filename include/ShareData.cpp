@@ -104,7 +104,7 @@ JudgeTiming ResultData::getAllJudgeTiming() {
   }
 
   if (res.fast + res.slow > 0) {
-    res.ave /= res.fast + res.slow;
+    res.ave /= (res.fast + res.slow);
   }
   
   return res;
@@ -182,6 +182,10 @@ void ShareData::decJudgeOffset() {
 
 double ShareData::getTotalOffset() {
   return globalOffset + judgeOffset;
+}
+
+double ShareData::getRecommendedOffset() {
+  return getJudgeOffset() - result.getAllJudgeTiming().ave;
 }
 
 String ShareData::getScoreFileName() {
