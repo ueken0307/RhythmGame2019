@@ -48,7 +48,7 @@ private:
   Texture laneEffect;
   Effect effect;
   Stopwatch stopwatch;
-  bool isStart, isMusicStarted;
+  bool isStart, isMusicStarted, loadFault;
   std::array<Line,5> vLines; //vertical lines
   double toJudgeLineNoteSpeed;
   double toBottomNoteSpeed;

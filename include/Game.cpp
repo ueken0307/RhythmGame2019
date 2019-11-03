@@ -124,107 +124,114 @@ double calcJudgeLineValue(double start, double end) {
     (calcJudgeLineValue(start, x));
 }
 
-Game::Game(const InitData& init) : IScene(init), font(20), font60(60), font100(100), isStart(false), isMusicStarted(false) {
+Game::Game(const InitData& init) : IScene(init), font(20), font60(60), font100(100), isStart(false), isMusicStarted(false), loadFault(false) {
   JSONReader reader(getData().getScoreFileName());
   DEBUG_PRINTF("%s",getData().getScoreFileName().narrow().c_str());
-  if (!reader) {
-    //譜面ファイル開けなかったときの処理
-  }
-
-  //---------bpm---------
-  std::vector<BpmData> bpms;
-  for (const auto& i : reader[U"bpms"].arrayView()) {
-    bpms.push_back(BpmData(i[U"time"].get<int32>(), i[U"bpm"].get<double>(), i[U"beat"].get<int32>()));
-  }
-
-  //譜面のオフセット
-  double scoreOffset = getData().getSelectedInfo().getOffset();
-  //開始小節
-  int startMeasure = 0;
-  //譜面が始まる前のの時間
-  double beforeSec = 1.0;
-
-  //RhythmManagerの初期化
-  rhythmManager = RhythmManager(bpms,scoreOffset,startMeasure,beforeSec);
-
-  //---------note--------
-  int totalNotes = 0;
-  for (const auto& i : reader[U"notes"].arrayView()) {
-    if (i[U"length"].get<int32>() != 0 && (i[U"lane"].get<int32>() == 0 || i[U"lane"].get<int32>() == 5)) {
-      //ロングノーツで端っこのレーンの場合は通常ノーツに変更する
-      allNotes.at(i[U"lane"].get<int32>()).push_back(
-        NoteData(
-          i[U"time"].get<int32>(),
-          rhythmManager.BtoS(i[U"time"].get<int32>()),
-          rhythmManager.BtoS(i[U"time"].get<int32>() + 0),
-          i[U"lane"].get<int32>(),
-          0
-        )
-      );
-    } else {
-      allNotes.at(i[U"lane"].get<int32>()).push_back(
-        NoteData(
-          i[U"time"].get<int32>(),
-          rhythmManager.BtoS(i[U"time"].get<int32>()),
-          rhythmManager.BtoS(i[U"time"].get<int32>() + i[U"length"].get<int32>()),
-          i[U"lane"].get<int32>(),
-          i[U"length"].get<int32>()
-        )
-      );
+  if (reader) {
+    //---------bpm---------
+    std::vector<BpmData> bpms;
+    for (const auto& i : reader[U"bpms"].arrayView()) {
+      bpms.push_back(BpmData(i[U"time"].get<int32>(), i[U"bpm"].get<double>(), i[U"beat"].get<int32>()));
     }
-    totalNotes++;
-  }
 
-  //長押しのtotalNotes処理
-  for (const auto& laneNotes : allNotes) {
-    for (const auto& note : laneNotes) {
-      if (note.length != 0) {
-        //終点 + 途中
-        int longCounts = static_cast<int>(floor((note.endSecond - note.second) / longNoteJudgeDuration));
-        totalNotes += 1 + ((longCounts == 0)? 1 : longCounts);
+    //譜面のオフセット
+    double scoreOffset = getData().getSelectedInfo().getOffset();
+    //開始小節
+    int startMeasure = 0;
+    //譜面が始まる前のの時間
+    double beforeSec = 1.0;
+
+    //RhythmManagerの初期化
+    rhythmManager = RhythmManager(bpms, scoreOffset, startMeasure, beforeSec);
+
+    //---------note--------
+    int totalNotes = 0;
+    for (const auto& i : reader[U"notes"].arrayView()) {
+      if (i[U"length"].get<int32>() != 0 && (i[U"lane"].get<int32>() == 0 || i[U"lane"].get<int32>() == 5)) {
+        //ロングノーツで端っこのレーンの場合は通常ノーツに変更する
+        allNotes.at(i[U"lane"].get<int32>()).push_back(
+          NoteData(
+            i[U"time"].get<int32>(),
+            rhythmManager.BtoS(i[U"time"].get<int32>()),
+            rhythmManager.BtoS(i[U"time"].get<int32>() + 0),
+            i[U"lane"].get<int32>(),
+            0
+          )
+        );
+      }
+      else {
+        allNotes.at(i[U"lane"].get<int32>()).push_back(
+          NoteData(
+            i[U"time"].get<int32>(),
+            rhythmManager.BtoS(i[U"time"].get<int32>()),
+            rhythmManager.BtoS(i[U"time"].get<int32>() + i[U"length"].get<int32>()),
+            i[U"lane"].get<int32>(),
+            i[U"length"].get<int32>()
+          )
+        );
+      }
+      totalNotes++;
+    }
+
+    //長押しのtotalNotes処理
+    for (const auto& laneNotes : allNotes) {
+      for (const auto& note : laneNotes) {
+        if (note.length != 0) {
+          //終点 + 途中
+          int longCounts = static_cast<int>(floor((note.endSecond - note.second) / longNoteJudgeDuration));
+          totalNotes += 1 + ((longCounts == 0) ? 1 : longCounts);
+        }
       }
     }
+
+    getData().result.reset(totalNotes);
+
+    //音楽のロード、初期位置設定
+    AudioAsset::Preload(getData().getSelectedInfo().getAssetName());
+    AudioAsset(getData().getSelectedInfo().getAssetName()).setLoop(false);
+    AudioAsset(getData().getSelectedInfo().getAssetName()).setPosSec(rhythmManager.getMusicInitPos());
+    AudioAsset(getData().getSelectedInfo().getAssetName()).setVolume(0.7);
+
+    //タップ音のロード
+    AudioAsset::Preload(U"tap");
+    AudioAsset(U"tap").setVolume(1.0);
+
+    //エフェクト画像のプリロード
+    for (const auto& judge : judges) {
+      TextureAsset::Preload(judge.name);
+    }
+    TextureAsset::Preload(miss.name);
+
+
+    laneEffect = Texture(Resource(U"laneEffect.png"));
+
+    for (size_t i = 0; i < vLines.size(); ++i) {
+      vLines.at(i) = Line({ centerX - (upW / 2) + ((double)upW / (vLines.size() - 1)) * i, upY },
+        { centerX - (bottomW / 2) + ((double)bottomW / (vLines.size() - 1)) * i, bottomY });
+    }
+
+    laneKeys = { KeyS, KeyD, KeyF, KeyJ, KeyK, KeyL };
+    beforeKeyStatuses.fill(false);
+
+    toJudgeLineNoteSpeed = getData().getNoteSpeed();
+    toBottomNoteSpeed = toJudgeLineNoteSpeed / calcJudgeLineValue(0, 1);
+
+    getData().drawBackground.random();
+
+    stopwatch.restart();
+  } else {
+    loadFault = true;
   }
 
-  getData().result.reset(totalNotes);
-
-  //音楽のロード、初期位置設定
-  AudioAsset::Preload(getData().getSelectedInfo().getAssetName());
-  AudioAsset(getData().getSelectedInfo().getAssetName()).setLoop(false);
-  AudioAsset(getData().getSelectedInfo().getAssetName()).setPosSec(rhythmManager.getMusicInitPos());
-  AudioAsset(getData().getSelectedInfo().getAssetName()).setVolume(0.7);
-
-  //タップ音のロード
-  AudioAsset::Preload(U"tap");
-  AudioAsset(U"tap").setVolume(1.0);
-
-  //エフェクト画像のプリロード
-  for (const auto& judge : judges) {
-    TextureAsset::Preload(judge.name);
-  }
-  TextureAsset::Preload(miss.name);
-
-
-  laneEffect = Texture(Resource(U"laneEffect.png"));
-
-  for (size_t i = 0; i < vLines.size(); ++i) {
-    vLines.at(i) = Line({centerX - (upW/2)  + ((double)upW / (vLines.size() - 1)) * i, upY},
-      { centerX - (bottomW / 2) + ((double)bottomW / (vLines.size() - 1)) * i, bottomY});
-  }
-
-  laneKeys = {KeyS, KeyD, KeyF, KeyJ, KeyK, KeyL};
-  beforeKeyStatuses.fill(false);
   
-  toJudgeLineNoteSpeed = getData().getNoteSpeed();
-  toBottomNoteSpeed = toJudgeLineNoteSpeed /calcJudgeLineValue(0, 1);
-
-  getData().drawBackground.random();
-
-  stopwatch.restart();
 }
 
 
 void Game::update() {
+  if (loadFault) {
+    changeScene(State::MusicSelection);
+  }
+
   getData().drawBackground.update();
 
   if (isStart) {
