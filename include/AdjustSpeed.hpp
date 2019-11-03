@@ -14,6 +14,8 @@ public:
   void draw() const override;
 
 private:
+  double getJudgeDiff();
+  void judge();
   double noteYFunc(double input) const;
   double getNoteY(double t) const;
   double getNoteHeight(double t) const;
@@ -24,6 +26,10 @@ private:
 
   Font font30,font60;
   Stopwatch stopwatch;
+  Effect effect;
+  bool isJudgeEnded;
+  bool isSpeed;
+  double recentJudgeResult;
 };
 
 #endif // !ADJUST_HPP
