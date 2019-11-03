@@ -140,7 +140,7 @@ void AdjustSpeed::update() {
     if (isSpeed) {
       getData().drawGuide.set(std::vector<String>({ U"判定を確認する",U"スピードを上げる",U"スピードを下げる",U"判定タイミング調整に切り替える" }));
     } else {
-      getData().drawGuide.set(std::vector<String>({ U"判定を確認する",U"判定タイミングを早くする",U"判定タイミングを遅くする",U"判定タイミング調整に切り替える" }));
+      getData().drawGuide.set(std::vector<String>({ U"判定を確認する",U"判定タイミングを早くする",U"判定タイミングを遅くする",U"スピード調整に切り替える" }));
     }
   }
 }
