@@ -153,10 +153,12 @@ void AdjustSpeed::draw() const {
   judgeLine.draw(10.0, Color(240, 20, 20));
   
 
-  font60(U"スピード  :  " + ToString(getData().getNoteSpeed())).drawAt(1200, 300);
+  font60(((isSpeed)? U"→スピード  :  ": U"スピード　:　" )+ ToString(getData().getNoteSpeed()))
+    .drawAt(1200, 300,((isSpeed)? Color(255,80,80) : Color(255)));
   font30(U"ノーツが見え始めてから判定ラインに到達するまでの秒[s]").drawAt(1200, 350);
 
-  font60(U"判定タイミング  :  " + ToString(getData().getJudgeOffset())).drawAt(1200, 500);
+  font60(((!isSpeed) ? U"→判定タイミング  :  " : U"判定タイミング  :  ") + ToString(getData().getJudgeOffset()))
+    .drawAt(1200, 500, ((!isSpeed) ? Color(255, 80, 80) : Color(255)));
   font30(U"SLOWが多く出る場合はマイナスの値に、FASTが多く出る場合は正の値に調整する。 ").drawAt(1200, 550);
 
   if (getData().getPlayNum() != 0) {
