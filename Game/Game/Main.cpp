@@ -50,6 +50,7 @@ void Main() {
   }
   sm.get()->setMusicFolderPath(reader[U"MusicFolderPath"].get<String>());
   sm.get()->setGlobalOffset(reader[U"GlobalOffset"].get<double>());
+  sm.get()->setMaxPlayNum(reader[U"MaxPlayNum"].get<int>());
 
   if (reader[U"isFullScreen"].get<bool>()) {
     auto resolutions = Graphics::GetFullscreenResolutions();

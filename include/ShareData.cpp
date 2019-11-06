@@ -1,7 +1,5 @@
 #include "ShareData.hpp"
 
-constexpr int maxPlayNum = 2;
-
 Judge miss = Judge(U"Miss", 0, 0);
 
 std::array<Judge, JUDGE_NUM> judges = {
@@ -207,6 +205,10 @@ MusicInfo& ShareData::getInfoFromSelected(int offset) {
   }
 
   return infos.at(index);
+}
+
+void ShareData::setMaxPlayNum(int maxPlayNum) {
+  this->maxPlayNum = maxPlayNum;
 }
 
 int ShareData::getMaxPlayNum() {

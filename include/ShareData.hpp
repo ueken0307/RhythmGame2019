@@ -60,6 +60,7 @@ public:
   };
 
   void reset() {
+    maxPlayNum = 2;
     playNum = 0;
 
     selected = 0;
@@ -92,6 +93,7 @@ public:
   MusicInfo& getSelectedInfo();
   MusicInfo& getInfoFromSelected(int offset);
 
+  void setMaxPlayNum(int maxPlayNum);
   int getMaxPlayNum();
   int getPlayNum();
   void incPlayNum();
@@ -110,7 +112,7 @@ private:
   size_t selected, levelNum;
   double noteSpeed;
   double judgeOffset;
-  int playNum;
+  int playNum, maxPlayNum;
 
 };
 
